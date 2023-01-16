@@ -55,8 +55,6 @@ from PASSWORDS import *
 
 from ProgressPercentageCalculator import *
 
-# Test changes?
-
 #######################################################################
 
 # Some initial config info regarding the web app
@@ -416,9 +414,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 				try:
 
-					# response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(SingleUploadedFile.name, SingleUploadedFile))
+					response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(SingleUploadedFile.name, SingleUploadedFile))
 
-					response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name)
+# 					response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name)
 
 				except ClientError as e:
 
