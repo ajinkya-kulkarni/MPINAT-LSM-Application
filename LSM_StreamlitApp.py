@@ -291,7 +291,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		SampleKey = st.session_state['-SampleIDKey-']
 		if SampleKey is None:
-			st.error('SampleID should not be empty', icon = None)
+			st.error('Sample ID or Barcode should not be empty', icon = None)
 			st.stop()
 
 		####################
@@ -301,6 +301,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			All_Channel_Keys.append(st.session_state[f'-Channel{i}Key-'])
 
 		Active_Channels = All_Channel_Keys.count('Yes')
+		if (int(Active_Channels) == 0):
+			st.error('Select at least 1 active channel', icon = None)
+			st.stop()
 
 		####################
 
