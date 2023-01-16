@@ -139,7 +139,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		except:
 			
-			ErrorMessage = st.error('Unsuccessful authentication. Contact the admin(s) for help.', icon = None)
+			ErrorMessage = st.error('Unsuccessful connection with the Linkahead DB. Contact the admin(s) for help.', icon = None)
 
 			st.stop()
 
@@ -287,170 +287,188 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	if submitted:
+	if (submitted and len(UploadedFiles) > 0):
 
 		SampleKey = st.session_state['-SampleIDKey-']
+		if SampleKey is None:
+			st.error('SampleID should not be empty', icon = None)
+			st.stop()
+
+		####################
 
 		All_Channel_Keys = []
 		for i in range(1, len(ChannelNames) + 1):
 			All_Channel_Keys.append(st.session_state[f'-Channel{i}Key-'])
 
+		Active_Channels = All_Channel_Keys.count('Yes')
+
+		####################
+
 		NumberChannelsKey = st.session_state['-NumberChannelsKey-']
 		try:
 			type(int(NumberChannelsKey))
 		except:
-			st.error('Channel number should be an integer.', icon = None)
+			st.error('Channel number should be an integer', icon = None)
 			st.stop()
+		
+		if (int(NumberChannelsKey) != int(Active_Channels)):
+			st.error('Number of channels should be equal to the number of "Yes" for the active channels', icon = None)
+			st.stop()
+
+		if (int(NumberChannelsKey) == 0):
+			st.error('Number of channels should be more than 0', icon = None)
+			st.stop()
+
+		####################
 
 		ResolutionInXYPlaneKey = st.session_state['-ResolutionInXYPlaneKey-']
 		try:
 			type(float(ResolutionInXYPlaneKey))
 		except:
-			st.error('Resolution in XY Plane should be a number.', icon = None)
+			st.error('Resolution in XY Plane should be a number', icon = None)
 			st.stop()
+
+		if (float(ResolutionInXYPlaneKey) <= 0):
+			st.error('Resolution in XY Plane should be more than 0', icon = None)
+			st.stop()
+
+		####################
 
 		ResolutionZDirectionKey = st.session_state['-ResolutionZDirectionKey-']
 		try:
 			type(float(ResolutionZDirectionKey))
 		except:
-			st.error('Resolution in Z direction should be a number.', icon = None)
+			st.error('Resolution in Z direction should be a number', icon = None)
 			st.stop()
 
+		if (float(ResolutionZDirectionKey) <= 0):
+			st.error('Resolution in Z direction should be more than 0', icon = None)
+			st.stop()
+
+		####################
 
 		IlluminationLeftKey = st.session_state['-IlluminationLeftKey-']
 		IlluminationRightKey = st.session_state['-IlluminationRightKey-']
 
-		Active_Channels = All_Channel_Keys.count('Yes')
+		if (IlluminationLeftKey == False or IlluminationRightKey == False):
+			st.error('Select at least one option for the illuminations', icon = None)
+			st.stop()
 
-		# Sanity checks
+		###############################################################
 
-		if ( (int(NumberChannelsKey) != int(Active_Channels)) or (len(UploadedFiles) == 0) or (int(NumberChannelsKey) == 0) or (SampleKey == "") or float(ResolutionInXYPlaneKey) <= 0 or float(ResolutionZDirectionKey) <= 0 or (IlluminationLeftKey == False and IlluminationRightKey == False) ):
+		# Start executing the form
 
-			ErrorMessage = st.error('Check input(s) again.', icon = None)
+		PersonKey = st.session_state['-PersonKey-']
+		DateKey = st.session_state['-DateKey-']
 
-			time.sleep(1)
+		All_Aperture_Keys = []
+		for i in range(1, len(ChannelNames) + 1):
+			All_Aperture_Keys.append(st.session_state[f'-Aperture{i}Key-'])
 
-			ErrorMessage.empty()
+		All_ExposureTime_Keys = []
+		for i in range(1, len(ChannelNames) + 1):
+			All_ExposureTime_Keys.append(st.session_state[f'-ExposureTime{i}Key-'])
 
+		AdditionalCommentsKey = st.session_state['-AdditionalCommentsKey-']
+
+		#######################################################
+
+		result = zip(ComboNames, NameIDs)
+
+		filtered = [(a, b) for a, b in zip(ComboNames, NameIDs) if a == PersonKey]
+
+		NamePicked, NameIDPicked = zip(*filtered)
+
+		filtered = []
+
+		filtered = [(a, b, c, d, e) for a, b, c, d, e in zip(ChannelNames, ChannelIDs, All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys) if c == 'Yes']
+
+		ChannelNamesPicked, ChannelIDsPicked, ChannelsPicked, AperturesPicked, ExposureTimesPicked = zip(*filtered)
+
+		#######################################################
+
+		try:
+
+			sample_rec = db.execute_query(f"FIND RECORD Sample WITH sample_id = '{SampleKey}'", unique = True)
+
+		except:
+
+			ErrorMessage = st.error('Error with finding the requested specimen in the Linkahead DB! Please contact the admin(s) for help.', icon = None)
+
+			st.stop()
+
+		# Add metadata to the CaosDB server
+
+		rec = db.Record().add_parent(name = "LSM_Scan")
+
+		rec.add_property(name = "Sample", value = sample_rec)
+		rec.add_parent(name = "LSM_Scan")
+
+		rec.add_property(name = "operator", value = NameIDPicked[0])
+		rec.add_property(name = "date", value = DateKey)
+
+		rec.add_property(name = "delta_pixel_xy", value = ResolutionInXYPlaneKey)
+		rec.add_property(name = "delta_pixel_z", value = ResolutionZDirectionKey)
+
+		rec.add_property(name = "number_of_channels", value = NumberChannelsKey)
+		rec.add_property(name = "filters", value = list(ChannelIDsPicked))
+
+		rec.add_property(name = "illumination_left", value = IlluminationLeftKey)
+		rec.add_property(name = "illumination_right", value = IlluminationRightKey)
+
+		rec.add_property(name = "apertures", value = list(AperturesPicked))
+		rec.add_property(name = "exposure_times", value = list(ExposureTimesPicked))
+
+		rec.add_property(name = "additional_comments", value = AdditionalCommentsKey)
+
+		#######################################################
+
+		# Insert records to the CaosDB server
+
+		try:
+
+			rec.insert()
+
+			SuccessMessageMetadata = st.success('Successfully uploaded metadata, please wait while the images are uploaded.')
+
+		except:
+			
+			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Please contact the admin(s) for help.', icon = None)
+			
 			st.stop()
 
 		#######################################################
 
-		else:
+		# Upload images to Amazon S3 bucket
 
-			# Start executing the form
+		with st.spinner('Uploading the images now. Please wait.'):
 
-			PersonKey = st.session_state['-PersonKey-']
-			DateKey = st.session_state['-DateKey-']
+			for SingleUploadedFile in UploadedFiles:
 
-			All_Aperture_Keys = []
-			for i in range(1, len(ChannelNames) + 1):
-				All_Aperture_Keys.append(st.session_state[f'-Aperture{i}Key-'])
+				amazon_bucket_target_name = SampleKey + '/' + str(SingleUploadedFile.name)
 
-			All_ExposureTime_Keys = []
-			for i in range(1, len(ChannelNames) + 1):
-				All_ExposureTime_Keys.append(st.session_state[f'-ExposureTime{i}Key-'])
+				try:
 
-			AdditionalCommentsKey = st.session_state['-AdditionalCommentsKey-']
+					# response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(SingleUploadedFile.name, SingleUploadedFile))
 
-			#######################################################
+					response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name)
 
-			result = zip(ComboNames, NameIDs)
+				except ClientError as e:
 
-			filtered = [(a, b) for a, b in zip(ComboNames, NameIDs) if a == PersonKey]
+					ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
 
-			NamePicked, NameIDPicked = zip(*filtered)
+					logging.error(e)
 
-			filtered = []
+					st.stop()
 
-			filtered = [(a, b, c, d, e) for a, b, c, d, e in zip(ChannelNames, ChannelIDs, All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys) if c == 'Yes']
+				#######################################################
 
-			ChannelNamesPicked, ChannelIDsPicked, ChannelsPicked, AperturesPicked, ExposureTimesPicked = zip(*filtered)
+		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 
-			#######################################################
+		#######################################################
 
-			try:
+		SuccessMessageImagesUpload = st.success('Successfully uploaded metadata and images. Refresh page to start a new upload.')
 
-				sample_rec = db.execute_query(f"FIND RECORD Sample WITH sample_id = '{SampleKey}'", unique = True)
-
-			except:
-
-				ErrorMessage = st.error('Error with finding the requested specimen in the Linkahead DB!', icon = None)
-
-				st.stop()
-
-			# Add metadata to the CaosDB server
-
-			rec = db.Record().add_parent(name = "LSM_Scan")
-
-			rec.add_property(name = "Sample", value = sample_rec)
-			rec.add_parent(name = "LSM_Scan")
-
-			rec.add_property(name = "operator", value = NameIDPicked[0])
-			rec.add_property(name = "date", value = DateKey)
-
-			rec.add_property(name = "delta_pixel_xy", value = ResolutionInXYPlaneKey)
-			rec.add_property(name = "delta_pixel_z", value = ResolutionZDirectionKey)
-
-			rec.add_property(name = "number_of_channels", value = NumberChannelsKey)
-			rec.add_property(name = "filters", value = list(ChannelIDsPicked))
-
-			rec.add_property(name = "illumination_left", value = IlluminationLeftKey)
-			rec.add_property(name = "illumination_right", value = IlluminationRightKey)
-
-			rec.add_property(name = "apertures", value = list(AperturesPicked))
-			rec.add_property(name = "exposure_times", value = list(ExposureTimesPicked))
-
-			rec.add_property(name = "additional_comments", value = AdditionalCommentsKey)
-
-			#######################################################
-
-			# Insert records to the CaosDB server
-
-			try:
-
-				rec.insert()
-
-				SuccessMessageMetadata = st.success('Successfully uploaded metadata, please wait while the images are uploaded.')
-
-			except:
-				
-				ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Please contact the admin(s) for help.', icon = None)
-				
-				st.stop()
-
-			#######################################################
-
-			# Upload images to Amazon S3 bucket
-
-			with st.spinner('Uploading the images now. Please wait.'):
-
-				for SingleUploadedFile in UploadedFiles:
-
-					amazon_bucket_target_name = SampleKey + '/' + str(SingleUploadedFile.name)
-
-					try:
-
-						# response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(SingleUploadedFile.name, SingleUploadedFile))
-
-						response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name)
-
-					except ClientError as e:
-
-						ErrorMessage = st.error('Error with uploading images. Please contact the admin(s) for help.', icon = None)
-
-						logging.error(e)
-
-						st.stop()
-
-					#######################################################
-
-			uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
-
-			#######################################################
-
-			SuccessMessageImagesUpload = st.success('Successfully uploaded metadata and images. Refresh page to start a new upload. ')
-
-			st.stop()
+		st.stop()
 
 #######################################################################
