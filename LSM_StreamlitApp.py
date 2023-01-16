@@ -20,7 +20,7 @@
 #
 # Visit https://docs.indiscale.com/ for CaosDB Documentation.
 
-# UX/UI recommendations provided by Radhika Bhagwat (radhika.bhagwat3@gmail.com, Product Designer)
+# UX/UI recommendations provided by Radhika Bhagwat (radhika.bhagwat3@gmail.com, Product Designer) and Md Motiur Rahman Sagar <motiur.sagar@mpinat.mpg.de>
 
 ###############################################################
 
