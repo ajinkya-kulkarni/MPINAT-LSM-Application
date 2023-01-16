@@ -10,6 +10,7 @@ os.system('cls||clear')
 
 #############################################################################
 
+# define the proxy server
 UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
 
 #############################################################################
