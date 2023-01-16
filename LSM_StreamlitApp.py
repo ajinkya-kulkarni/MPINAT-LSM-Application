@@ -315,7 +315,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		IlluminationLeftKey = st.session_state['-IlluminationLeftKey-']
 		IlluminationRightKey = st.session_state['-IlluminationRightKey-']
 
-		if (IlluminationLeftKey == False or IlluminationRightKey == False):
+		if (IlluminationLeftKey == False and IlluminationRightKey == False):
 			st.error('Select at least one option for the illuminations', icon = None)
 			st.stop()
 
