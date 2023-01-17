@@ -402,7 +402,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Please contact the admin(s) for help.', icon = None)
 			
 			st.stop()
-
+		
 		#######################################################
 
 		# Upload images to Amazon S3 bucket
@@ -429,6 +429,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 					pass
 
 				#######################################################
+
+		with open("ErrorLogs.txt", "w") as output:
+			output.write(str(ErrorLogs))
 
 		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 
