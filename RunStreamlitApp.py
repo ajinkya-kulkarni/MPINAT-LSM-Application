@@ -3,17 +3,14 @@ import os
 import urllib.request
 import subprocess
 import packaging.version
+import sys
+sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
 #############################################################################
 
 os.system('cls||clear')
 
 subprocess.run("echo.", shell=True)
-
-#############################################################################
-
-# define the proxy server
-UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
 
 #############################################################################
 
@@ -25,6 +22,12 @@ if not os.path.exists(file_path):
     raise Exception(f"{file_name} does not exist in the current directory")
 else:
 	print(f"{file_name} exists in the current directory")
+
+#############################################################################
+
+# define the proxy server from the PASSWORDS file
+
+from PASSWORDS import *
 
 #############################################################################
 
@@ -74,9 +77,6 @@ except:
 
 subprocess.run("echo.", shell=True)
 
-# specify the path to the Streamlit app
-app_path = os.path.join(os.getcwd(), file_name)
-
 #############################################################################
 
 # function to check for latest versions
@@ -117,6 +117,9 @@ check_and_install("caosdb", "0.10.0")
 subprocess.run("echo.", shell=True)
 
 #############################################################################
+
+# specify the path to the Streamlit app
+app_path = os.path.join(os.getcwd(), file_name)
 
 os.system("echo 'Starting streamlit now...'")
 
