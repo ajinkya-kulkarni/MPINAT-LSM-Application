@@ -149,9 +149,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Date selection widget
 
-	st.date_input("Date of the scanned LSM image(s)", date.today(), key = '-DateKey-')
+	st.date_input("Date when the LSM image(s) were scanned", date.today(), key = '-DateKey-')
 
-	st.text_input('Input the path of the folder containing the images', placeholder = 'None', key = '-FolderPathKey-')
+	st.text_input('Write the path of the folder containing the images', placeholder = 'None', key = '-FolderPathKey-')
 
 	###############################################################
 
@@ -227,7 +227,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	st.subheader(':blue[Fill in the Objective and Zoom information]')
+	st.subheader(':blue[Select Objective and Zoom information]')
 
 	AllObjectives = ['1x', '4x', '12x']
 
@@ -247,7 +247,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	st.subheader(':blue[Fill in the Sheet Width information]')
+	st.subheader(':blue[Select Sheet Width information]')
 
 	st.caption('Sheet Width should be more than 0%', unsafe_allow_html = False)
 
