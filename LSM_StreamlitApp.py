@@ -39,6 +39,8 @@ import time
 import os
 import logging
 
+import numpy as np
+
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
@@ -51,7 +53,11 @@ from PASSWORDS import *
 
 from ProgressPercentageCalculator import *
 
+from SanityChecks import *
+
 #######################################################################
+
+SleepTime = 5
 
 # Some initial config info regarding the web app
 
@@ -98,6 +104,10 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		except:
 			
 			ErrorMessage = st.error('Unsuccessful connection with the Linkahead DB. Contact the admin(s) for help.', icon = None)
+
+			time.sleep(SleepTime)
+
+			ErrorMessage.empty()
 
 			st.stop()
 
@@ -149,9 +159,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Date selection widget
 
-	st.date_input("Date of the scanned LSM image(s)", date.today(), key = '-DateKey-')
+	st.date_input("Date when the LSM image(s) were scanned", date.today(), key = '-DateKey-')
 
-	st.text_input('Input the path of the folder containing the images', placeholder = 'None', key = '-FolderPathKey-')
+	st.text_input('Write the path of the folder containing the images', placeholder = 'None', key = '-FolderPathKey-')
 
 	###############################################################
 
@@ -227,7 +237,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	st.subheader(':blue[Fill in the Objective and Zoom information]')
+	st.subheader(':blue[Select Objective and Zoom information]')
 
 	AllObjectives = ['1x', '4x', '12x']
 
@@ -247,7 +257,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	st.subheader(':blue[Fill in the Sheet Width information]')
+	st.subheader(':blue[Select Sheet Width information]')
 
 	st.caption('Sheet Width should be more than 0%', unsafe_allow_html = False)
 
@@ -275,7 +285,10 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		SampleKey = st.session_state['-SampleIDKey-']
 		if SampleKey is None:
-			st.error('Sample ID or Barcode should not be empty', icon = None)
+			
+			ErrorMessage = st.error('Sample ID or Barcode should not be empty', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 
 		####################
@@ -286,7 +299,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			all_files = os.listdir(FolderPathKey)
 			tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
 		except:
-			st.error('Incorrect folder path', icon = None)
+			ErrorMessage = st.error('Incorrect folder path', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 
 		####################
@@ -297,7 +312,10 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		Active_Channels = All_Channel_Keys.count('Yes')
 		if (int(Active_Channels) == 0):
-			st.error('Select at least 1 active channel', icon = None)
+			
+			ErrorMessage = st.error('Select at least 1 active channel', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 
 		####################
@@ -306,15 +324,56 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		try:
 			type(int(NumberChannelsKey))
 		except:
-			st.error('Channel number should be an integer', icon = None)
+			ErrorMessage = st.error('Channel number should be an integer', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 		
 		if (int(NumberChannelsKey) != int(Active_Channels)):
-			st.error('Number of channels should be equal to the number of "Yes" for the active channels', icon = None)
+			ErrorMessage = st.error('Number of channels should be equal to the number of "Yes" for the active channels', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 
 		if (int(NumberChannelsKey) == 0):
-			st.error('Number of channels should be more than 0', icon = None)
+			ErrorMessage = st.error('Number of channels should be more than 0', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
+			st.stop()
+
+		####################
+
+		All_Aperture_Keys = []
+		for i in range(1, len(ChannelNames) + 1):
+			All_Aperture_Keys.append(st.session_state[f'-Aperture{i}Key-'])
+		try:
+			np.float_(All_Aperture_Keys)
+		except:
+			ErrorMessage = st.error('Aperture(s) must be a number', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
+			st.stop()
+
+		####################
+
+		All_ExposureTime_Keys = []
+		for i in range(1, len(ChannelNames) + 1):
+			All_ExposureTime_Keys.append(st.session_state[f'-ExposureTime{i}Key-'])
+		try:
+			np.float_(All_ExposureTime_Keys)
+		except:
+			ErrorMessage = st.error('Exposure Time(s) must be a number', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
+			st.stop()
+
+		# Check from the function SanityChecks:
+
+		counter = SanityChecks(All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys)
+		if counter > 0:
+			ErrorMessage = st.error('Check the input(s) regarding the Channel(s), Aperture and Exposure Time', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 
 		####################
@@ -323,11 +382,15 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		try:
 			type(float(ResolutionInXYPlaneKey))
 		except:
-			st.error('Resolution in XY Plane should be a number', icon = None)
+			ErrorMessage = st.error('Resolution in XY Plane should be a number', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()
 			st.stop()
 
 		if (float(ResolutionInXYPlaneKey) <= 0):
-			st.error('Resolution in XY Plane should be more than 0', icon = None)
+			ErrorMessage = st.error('Resolution in XY Plane should be more than 0', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
 
 		####################
@@ -336,11 +399,15 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		try:
 			type(float(ResolutionZDirectionKey))
 		except:
-			st.error('Resolution in Z direction should be a number', icon = None)
+			ErrorMessage = st.error('Resolution in Z direction should be a number', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
 
 		if (float(ResolutionZDirectionKey) <= 0):
-			st.error('Resolution in Z direction should be more than 0', icon = None)
+			ErrorMessage = st.error('Resolution in Z direction should be more than 0', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
 
 		####################
@@ -349,7 +416,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		IlluminationRightKey = st.session_state['-IlluminationRightKey-']
 
 		if (IlluminationLeftKey == False and IlluminationRightKey == False):
-			st.error('Select at least one option for the illuminations', icon = None)
+			ErrorMessage = st.error('Select at least one option for the illuminations', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
 
 		###############################################################
@@ -359,7 +428,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		SheetWidthKey = st.session_state['-SheetWidthKey-']
 
 		if (int(SheetWidthKey) == 0):
-			st.error('Sheet Width should be more than 0', icon = None)
+			ErrorMessage = st.error('Sheet Width should be more than 0', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
 
 		###############################################################
@@ -369,29 +440,40 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		PersonKey = st.session_state['-PersonKey-']
 		DateKey = st.session_state['-DateKey-']
 
-		All_Aperture_Keys = []
-		for i in range(1, len(ChannelNames) + 1):
-			All_Aperture_Keys.append(st.session_state[f'-Aperture{i}Key-'])
-
-		All_ExposureTime_Keys = []
-		for i in range(1, len(ChannelNames) + 1):
-			All_ExposureTime_Keys.append(st.session_state[f'-ExposureTime{i}Key-'])
-
 		AdditionalCommentsKey = st.session_state['-AdditionalCommentsKey-']
 
 		#######################################################
 
-		result = zip(ComboNames, NameIDs)
+		try:
 
-		filtered = [(a, b) for a, b in zip(ComboNames, NameIDs) if a == PersonKey]
+			result = zip(ComboNames, NameIDs)
 
-		NamePicked, NameIDPicked = zip(*filtered)
+			filtered = [(a, b) for a, b in zip(ComboNames, NameIDs) if a == PersonKey]
+
+			NamePicked, NameIDPicked = zip(*filtered)
+
+		except:
+
+			ErrorMessage = st.error('Error with name IDs and First/Last names. Please contact the admin(s) for help.', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
+			st.stop()
+
 
 		filtered = []
 
-		filtered = [(a, b, c, d, e) for a, b, c, d, e in zip(ChannelNames, ChannelIDs, All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys) if c == 'Yes']
+		try:
 
-		ChannelNamesPicked, ChannelIDsPicked, ChannelsPicked, AperturesPicked, ExposureTimesPicked = zip(*filtered)
+			filtered = [(a, b, c, d, e) for a, b, c, d, e in zip(ChannelNames, ChannelIDs, All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys) if c == 'Yes']
+
+			ChannelNamesPicked, ChannelIDsPicked, ChannelsPicked, AperturesPicked, ExposureTimesPicked = zip(*filtered)
+
+		except:
+
+			ErrorMessage = st.error('Error with picking details regarding channels. Please contact the admin(s) for help.', icon = None)
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
+			st.stop()
 
 		#######################################################
 
@@ -402,7 +484,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		except:
 
 			ErrorMessage = st.error('Error with finding the requested specimen in the Linkahead DB! Please contact the admin(s) for help.', icon = None)
-
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
 
 		# Add metadata to the CaosDB server
@@ -447,9 +530,10 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		except:
 			
 			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Please contact the admin(s) for help.', icon = None)
-			
+			time.sleep(SleepTime)
+			ErrorMessage.empty()			
 			st.stop()
-		
+
 		#######################################################
 
 		# Upload images to Amazon S3 bucket
