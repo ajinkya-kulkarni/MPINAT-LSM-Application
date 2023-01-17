@@ -8,6 +8,8 @@ import packaging.version
 
 os.system('cls||clear')
 
+os.system("echo ''")
+
 #############################################################################
 
 # define the proxy server
@@ -21,36 +23,30 @@ file_path = os.path.join(os.getcwd(), file_name)
 
 if not os.path.exists(file_path):
     raise Exception(f"{file_name} does not exist in the current directory")
-
-#############################################################################
-
-# get the current directory path
-directory_path = os.getcwd()
-
-#############################################################################
-
-# specify the file name
-file_name = "LSM_StreamlitApp.py"
-
-#############################################################################
-
-# specify the url of the file you want to download
-url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/LSM_StreamlitApp.py"
-
-#############################################################################
-
-# check if the file already exists in the current directory and delete it before downloading it again
-
-file_path = os.path.join(os.getcwd(), file_name)
-
-if os.path.exists(file_name):
-	os.remove(file_name)
+else:
+	print(f"{file_name} exists in the current directory.")
 
 #############################################################################
 
 os.system("echo ''")
 
 #############################################################################
+
+# specify the file name
+file_name = "LSM_StreamlitApp.py"
+
+# check if the file already exists in the current directory and delete it before downloading it again
+
+file_path = os.path.join(os.getcwd(), file_name)
+
+if os.path.exists(file_path):
+	os.remove(file_path)
+	print(f"Deleted old {file_name}.")
+
+#############################################################################
+
+# specify the url of the file you want to download
+url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/LSM_StreamlitApp.py"
 
 # download the "LSM_StreamlitApp.py" file, first without a proxy and then with a proxy
 try:

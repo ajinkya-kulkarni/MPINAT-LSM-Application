@@ -24,12 +24,8 @@
 
 ###############################################################
 
-# Run this script as streamlit run LSM_StreamlitApp.py --server.maxUploadSize 5000 # Max size of each uploaded file is 5000mb
-
-###############################################################
-
-# TODO: 
-# 1. Add a progress bar for the S3 uploads based on the progress callback.
+# Run this script from the terminal as:
+# streamlit run LSM_StreamlitApp.py --server.maxUploadSize 5000 # Max size of each uploaded file is 5000mb
 
 ###############################################################
 
@@ -159,7 +155,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Upload widget
 
-	st.subheader(':blue[Select the files to be uploaded]')
+	st.subheader(':blue[Select the images to be uploaded]')
+	
+	st.caption('If you have selected the wrong images, simply refresh this page to clear the selection', unsafe_allow_html = False)
+
+	st.markdown("")
 
 	UploadedFiles = st.file_uploader("Select the folder containing the images (only tiff or tif files)", type = ['tif', 'tiff'], label_visibility = "collapsed", accept_multiple_files = True)
 
