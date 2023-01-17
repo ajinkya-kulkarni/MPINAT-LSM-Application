@@ -48,8 +48,71 @@ if os.path.exists(file_path):
 
 #############################################################################
 
+# specify the file name
+file_name = "LSM_StreamlitApp.py"
+
 # specify the url of the file you want to download
 url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/LSM_StreamlitApp.py"
+
+# download the "LSM_StreamlitApp.py" file, first without a proxy and then with a proxy
+try:
+    # download the file and save it to a local file
+    urllib.request.urlretrieve(url, file_name)
+    print(f"Latest {file_name} fetched successfully")
+
+except urllib.error.HTTPError as e:
+    print(f"HTTP Error: {e.code} {e.reason}")
+    try:
+        # specify the proxy
+        proxy_support = urllib.request.ProxyHandler({'http': UMG_PROXY})
+        opener = urllib.request.build_opener(proxy_support)
+        urllib.request.install_opener(opener)
+        # download the file and save it to a local file
+        urllib.request.urlretrieve(url, file_name)
+        print(f"Latest {file_name} fetched successfully")
+    except:
+        urllib.request.install_opener(None)
+        print("Failed to fetch the file with proxy and without proxy")
+except:
+    print("Failed to fetch the file without proxy")
+
+####################
+
+# specify the file name
+file_name = "SanityChecks.py"
+
+# specify the url of the file you want to download
+url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/SanityChecks.py"
+
+# download the "SanityChecks.py" file, first without a proxy and then with a proxy
+try:
+    # download the file and save it to a local file
+    urllib.request.urlretrieve(url, file_name)
+    print(f"Latest {file_name} fetched successfully")
+
+except urllib.error.HTTPError as e:
+    print(f"HTTP Error: {e.code} {e.reason}")
+    try:
+        # specify the proxy
+        proxy_support = urllib.request.ProxyHandler({'http': UMG_PROXY})
+        opener = urllib.request.build_opener(proxy_support)
+        urllib.request.install_opener(opener)
+        # download the file and save it to a local file
+        urllib.request.urlretrieve(url, file_name)
+        print(f"Latest {file_name} fetched successfully")
+    except:
+        urllib.request.install_opener(None)
+        print("Failed to fetch the file with proxy and without proxy")
+except:
+    print("Failed to fetch the file without proxy")
+
+####################
+
+# specify the file name
+file_name = "ProgressPercentageCalculator.py"
+
+# specify the url of the file you want to download
+url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/ProgressPercentageCalculator.py"
 
 # download the "LSM_StreamlitApp.py" file, first without a proxy and then with a proxy
 try:
@@ -117,6 +180,9 @@ check_and_install("caosdb", "0.10.0")
 print()
 
 #############################################################################
+
+# specify the file name
+file_name = "LSM_StreamlitApp.py"
 
 # specify the path to the Streamlit app
 app_path = os.path.join(os.getcwd(), file_name)
