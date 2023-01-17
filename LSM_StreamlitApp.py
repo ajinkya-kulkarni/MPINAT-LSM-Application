@@ -159,7 +159,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Upload widget
 
-	st.subheader(':blue[Select the files to be uploaded]')
+	st.subheader(':blue[Select the images to be uploaded]')
+	
+	st.caption('If you have selected the wrong images, simply refresh this page to clear the selection', unsafe_allow_html = False)
+
+	st.markdown("")
 
 	UploadedFiles = st.file_uploader("Select the folder containing the images (only tiff or tif files)", type = ['tif', 'tiff'], label_visibility = "collapsed", accept_multiple_files = True)
 
