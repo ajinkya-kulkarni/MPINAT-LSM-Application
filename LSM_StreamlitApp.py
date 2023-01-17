@@ -550,6 +550,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			for single_tiff_file in tiff_files:
 
 				amazon_bucket_target_name = SampleKey + '/' + str(single_tiff_file)
+				
+				response = []
 
 				try:
 
