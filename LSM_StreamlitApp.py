@@ -24,12 +24,8 @@
 
 ###############################################################
 
-# Run this script as streamlit run LSM_StreamlitApp.py --server.maxUploadSize 5000 # Max size of each uploaded file is 5000mb
-
-###############################################################
-
-# TODO: 
-# 1. Add a progress bar for the S3 uploads based on the progress callback.
+# Run this script from the terminal as:
+# streamlit run LSM_StreamlitApp.py --server.maxUploadSize 5000 # Max size of each uploaded file is 5000mb
 
 ###############################################################
 
