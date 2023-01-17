@@ -31,7 +31,13 @@ from PASSWORDS import *
 
 #############################################################################
 
-subprocess.run("echo.", shell=True)
+try:
+
+	subprocess.run("echo.", shell=True)
+
+except:
+
+	print()
 
 #############################################################################
 
@@ -75,7 +81,13 @@ except:
 
 #############################################################################
 
-subprocess.run("echo.", shell=True)
+try:
+
+	subprocess.run("echo.", shell=True)
+
+except:
+
+	print()
 
 #############################################################################
 
@@ -114,8 +126,14 @@ check_and_install("caosdb", "0.10.0")
 
 #############################################################################
 
-subprocess.run("echo.", shell=True)
+try:
 
+	subprocess.run("echo.", shell=True)
+
+except:
+
+	print()
+	
 #############################################################################
 
 # specify the path to the Streamlit app
@@ -123,7 +141,13 @@ app_path = os.path.join(os.getcwd(), file_name)
 
 os.system("echo 'Starting streamlit now...'")
 
-subprocess.run("echo.", shell=True)
+try:
+
+	subprocess.run("echo.", shell=True)
+
+except:
+
+	print()
 
 # run the Streamlit app with the --server.maxUploadSize flag
 # 5000 = 5GB
