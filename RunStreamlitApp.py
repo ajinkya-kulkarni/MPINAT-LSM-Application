@@ -24,7 +24,7 @@ file_path = os.path.join(os.getcwd(), file_name)
 if not os.path.exists(file_path):
     raise Exception(f"{file_name} does not exist in the current directory")
 else:
-	print(f"{file_name} exists in the current directory.")
+	print(f"{file_name} exists in the current directory")
 
 #############################################################################
 
@@ -41,7 +41,7 @@ file_path = os.path.join(os.getcwd(), file_name)
 
 if os.path.exists(file_path):
 	os.remove(file_path)
-	print(f"Deleted old {file_name}.")
+	print(f"Deleted old {file_name}")
 
 #############################################################################
 
