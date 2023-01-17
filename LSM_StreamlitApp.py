@@ -278,6 +278,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	# Submit the form
 
 	submitted = st.form_submit_button('Submit')
+
+	st.markdown("""---""")
 	
 	###############################################################
 
@@ -521,11 +523,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		# Insert records to the CaosDB server
 
+		st.info('Uploading metadata now.')
+
 		try:
 
 			rec.insert()
-
-			SuccessMessageMetadata = st.success('Successfully uploaded metadata, please wait while the images are uploaded.')
 
 		except:
 			
@@ -534,9 +536,30 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			ErrorMessage.empty()			
 			st.stop()
 
+		ProgressBarText = st.empty()
+		ProgressBar = st.progress(0)
+
+		for percent_complete in range(100):
+
+			time.sleep(0.1)
+			ProgressBar.progress(percent_complete + 1)
+			ProgressBarText.caption(f'{percent_complete + 1} % metadata uploaded')
+
+		SuccessMessageMetadata = st.success('Successfully uploaded metadata, please wait while the images are uploaded.')
+
+		#######################################################
+
+		st.markdown("""---""")
+
+		time.sleep(SleepTime)
+
 		#######################################################
 
 		# Upload images to Amazon S3 bucket
+
+		st.info('Uploading images now.')
+
+		#######################################################
 
 		file_name = "ErrorLogs.txt"
 		file_path = os.path.join(os.getcwd(), file_name)
@@ -545,30 +568,40 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		ErrorLogs = []
 
-		with st.spinner('Uploading the images now. Please wait.'):
+		ProgressBarText = st.empty()
 
-			for single_tiff_file in tiff_files:
+		ProgressBar = st.progress(0)
 
-				amazon_bucket_target_name = SampleKey + '/' + str(single_tiff_file)
-				
-				response = []
+		for i in range(len(tiff_files)):
 
-				try:
+			ProgressBarText.caption(f'{int(100*i/len(tiff_files))} % images uploaded')
 
-					response = gwdg_client.upload_file(os.path.join(FolderPathKey, single_tiff_file),
-					bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(os.path.join(FolderPathKey, single_tiff_file)))
+			amazon_bucket_target_name = SampleKey + '/' + str(tiff_files[i])
 
-					print()
+			response = []
 
-				except ClientError as e:
+			try:
 
-					ErrorLogs.append([str(logging.error(e)), single_tiff_file])
+				response = gwdg_client.upload_file(os.path.join(FolderPathKey, tiff_files[i]),
+				bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(os.path.join(FolderPathKey, tiff_files[i])))
 
-					ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
+				print()
 
-					pass
+			except ClientError as e:
 
-				#######################################################
+				ErrorLogs.append([str(logging.error(e)), tiff_files[i]])
+
+				ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
+
+				pass
+
+			time.sleep(0.1)
+
+			ProgressBar.progress((i+1)/len(tiff_files))
+		
+		ProgressBarText.caption(f'{int(100*(i+1)/len(tiff_files))} % images uploaded')
+
+		#######################################################
 
 		with open("ErrorLogs.txt", "w") as output:
 			output.write(str(ErrorLogs))
@@ -577,7 +610,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
-		SuccessMessageImagesUpload = st.success('Successfully uploaded images. Refresh page to start a new upload.')
+		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Refresh the page to start a new upload.')
 
 		st.stop()
 
