@@ -149,7 +149,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Date selection widget
 
-	st.date_input("Date of uploading the LSM image(s)", date.today(), key = '-DateKey-')
+	st.date_input("Date of the scanned LSM image(s)", date.today(), key = '-DateKey-')
 
 	st.markdown("""---""")
 
