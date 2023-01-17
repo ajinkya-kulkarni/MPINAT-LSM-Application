@@ -151,17 +151,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.date_input("Date of the scanned LSM image(s)", date.today(), key = '-DateKey-')
 
-	st.markdown("""---""")
-
-	# Upload widget
-
-	st.subheader(':blue[Select the images to be uploaded]')
-	
-	st.caption('If you have selected the wrong images, simply refresh this page to clear the selection', unsafe_allow_html = False)
-
-	st.markdown("")
-
-	UploadedFiles = st.file_uploader("Select the folder containing the images (only tiff or tif files)", type = ['tif', 'tiff'], label_visibility = "collapsed", accept_multiple_files = True)
+	st.text_input('Input the path of the folder containing the images', value = 'None', placeholder = 'None', key = '-FolderPathKey-')
 
 	###############################################################
 
@@ -249,7 +239,15 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	if (submitted and len(UploadedFiles) > 0):
+	FolderPathKey = st.session_state['-FolderPathKey-']
+
+	all_files = os.listdir(FolderPathKey)
+	extensions_allowed = [".tif", ".tiff"]
+	tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
+	
+	###############################################################
+
+	if (submitted and len(tiff_files) > 0):
 
 		SampleKey = st.session_state['-SampleIDKey-']
 		if SampleKey is None:
@@ -406,25 +404,28 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		# Upload images to Amazon S3 bucket
 
+		ErrorLogs = []
+
 		with st.spinner('Uploading the images now. Please wait.'):
 
-			for SingleUploadedFile in UploadedFiles:
+			for single_tiff_file in tiff_files:
 
-				amazon_bucket_target_name = SampleKey + '/' + str(SingleUploadedFile.name)
+				amazon_bucket_target_name = SampleKey + '/' + str(single_tiff_file)
 
 				try:
 
-					response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(SingleUploadedFile.name, SingleUploadedFile))
-
-# 					response = gwdg_client.upload_fileobj(SingleUploadedFile, bucket_name, amazon_bucket_target_name)
+					response = gwdg_client.upload_file(os.path.join(FolderPathKey, single_tiff_file),
+					bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(os.path.join(FolderPathKey, single_tiff_file)))
+					
+					print()
 
 				except ClientError as e:
 
 					ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
 
-					logging.error(e)
+					ErrorLogs.append(logging.error(e))
 
-					st.stop()
+					pass
 
 				#######################################################
 
