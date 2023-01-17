@@ -419,14 +419,12 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 					response = gwdg_client.upload_file(os.path.join(FolderPathKey, single_tiff_file),
 					bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(os.path.join(FolderPathKey, single_tiff_file)))
-					
-					print()
 
 				except ClientError as e:
 
-					ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
+					ErrorLogs.append([str(logging.error(e)), single_tiff_file])
 
-					ErrorLogs.append(logging.error(e))
+					ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
 
 					pass
 
