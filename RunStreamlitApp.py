@@ -15,6 +15,15 @@ UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
 
 #############################################################################
 
+# check if the PASSWORDS file exists in the current directory
+file_name = "PASSWORDS.py"
+file_path = os.path.join(os.getcwd(), file_name)
+
+if not os.path.exists(file_path):
+    raise Exception(f"{file_name} does not exist in the current directory")
+
+#############################################################################
+
 # get the current directory path
 directory_path = os.getcwd()
 
@@ -31,6 +40,9 @@ url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application
 #############################################################################
 
 # check if the file already exists in the current directory and delete it before downloading it again
+
+file_path = os.path.join(os.getcwd(), file_name)
+
 if os.path.exists(file_name):
 	os.remove(file_name)
 
@@ -67,7 +79,7 @@ except:
 os.system("echo ''")
 
 # specify the path to the Streamlit app
-app_path = os.path.join(directory_path, file_name)
+app_path = os.path.join(os.getcwd(), file_name)
 
 #############################################################################
 
@@ -108,6 +120,26 @@ except subprocess.CalledProcessError as e:
 		print("boto3 package installed successfully")
 	except subprocess.CalledProcessError as e:
 		print("Error: Failed to install boto3 package")
+		print("Error code: ", e.returncode)
+		print("Error message: ", e.output)
+
+# Check if botocore >= 1.29.50, if not download latest version
+try:
+	current_version = subprocess.check_output(["pip", "show", "botocore"]).decode("utf-8").split("\n")
+	current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
+	latest_version = subprocess.check_output(["pip", "show", "-v", "botocore"]).decode("utf-8").split("\n")
+	latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
+	if packaging.version.parse(current_version) < packaging.version.parse("0.10.0"):
+		subprocess.run(["pip", "install", "--upgrade", "botocore"], check=True)
+		print("botocore package installed successfully")
+	else:
+		print("botocore package version is already >=1.29.50")
+except subprocess.CalledProcessError as e:
+	try:
+		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "botocore"], check=True)
+		print("botocore package installed successfully")
+	except subprocess.CalledProcessError as e:
+		print("Error: Failed to install botocore package")
 		print("Error code: ", e.returncode)
 		print("Error message: ", e.output)
 
