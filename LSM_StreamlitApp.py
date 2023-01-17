@@ -432,7 +432,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
-		SuccessMessageImagesUpload = st.success('Successfully uploaded metadata and images. Refresh page to start a new upload.')
+		SuccessMessageImagesUpload = st.success('Successfully uploaded images. Refresh page to start a new upload.')
 
 		st.stop()
 
