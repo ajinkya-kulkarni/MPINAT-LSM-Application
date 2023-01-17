@@ -55,7 +55,7 @@ from ProgressPercentageCalculator import *
 
 # Some initial config info regarding the web app
 
-st.set_page_config(page_title = 'LSM Application', page_icon = None, layout = "wide", initial_sidebar_state = "expanded", menu_items = {'Get help': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'Report a bug': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'About': 'This is a webpage for uploading the LSM images and the metadata used in the ABA project at the MPI-NAT, Goettingen. Developed, tested and maintained by Ajinkya Kulkarni: https://github.com/ajinkya-kulkarni and reachable at mailto:ajinkya.kulkarni@mpinat.mpg.de'
+st.set_page_config(page_title = 'LSM Application', page_icon = None, layout = "centered", initial_sidebar_state = "expanded", menu_items = {'Get help': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'Report a bug': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'About': 'This is a webpage for uploading the LSM images and the metadata used in the ABA project at the MPI-NAT, Goettingen. Developed, tested and maintained by Ajinkya Kulkarni: https://github.com/ajinkya-kulkarni and reachable at mailto:ajinkya.kulkarni@mpinat.mpg.de'
 })
 
 # Title of the web app
@@ -181,7 +181,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		for i in range(1, len(ChannelNames) + 1):
 			
-			st.text_input(f'Aperture', value='0', placeholder='0', key = f'-Aperture{i}Key-')
+			st.text_input(f'Aperture (%)', value='0', placeholder='0', key = f'-Aperture{i}Key-')
 
 	with right_column1:
 
@@ -222,6 +222,38 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	with right_column3:
 
 		st.text_input('Resolution in Z direction (*mandatory, micro m)', value = '0', placeholder = '0', key = '-ResolutionZDirectionKey-')
+
+	st.markdown("""---""")
+
+	###############################################################
+
+	st.subheader(':blue[Fill in the Objective and Zoom information]')
+
+	AllObjectives = ['1x', '4x', '12x']
+
+	AllZoomInfo = ['0.6x', '1x', '1.66x', '2.5x']
+
+	left_column4, right_column4  = st.columns(2)
+
+	with left_column4:
+
+		st.selectbox('Objective', AllObjectives, label_visibility = "visible", key = '-ObjectiveKey-')
+
+	with right_column4:
+
+		st.selectbox('Zoom', AllZoomInfo, label_visibility = "visible", key = '-ZoomKey-')
+
+	st.markdown("""---""")
+
+	###############################################################
+
+	st.subheader(':blue[Fill in the Sheet Width information]')
+
+	st.caption('Sheet Width should be more than 0%', unsafe_allow_html = False)
+
+	st.markdown("")
+
+	st.slider('Sheet Width (%)', min_value = 0, max_value = 100, value = 0, step = 5, label_visibility = "visible", key = '-SheetWidthKey-')
 
 	st.markdown("""---""")
 
@@ -322,6 +354,16 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		###############################################################
 
+		ObjectiveKey = st.session_state['-ObjectiveKey-']
+		ZoomKey = st.session_state['-ZoomKey-']
+		SheetWidthKey = st.session_state['-SheetWidthKey-']
+
+		if (int(SheetWidthKey) == 0):
+			st.error('Sheet Width should be more than 0', icon = None)
+			st.stop()
+
+		###############################################################
+
 		# Start executing the form
 
 		PersonKey = st.session_state['-PersonKey-']
@@ -384,6 +426,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		rec.add_property(name = "apertures", value = list(AperturesPicked))
 		rec.add_property(name = "exposure_times", value = list(ExposureTimesPicked))
+
+		rec.add_property(name = "objective", value = ObjectiveKey)
+		rec.add_property(name = "zoom", value = ZoomKey)
+
+		rec.add_property(name = "sheet_width", value = int(SheetWidthKey))
 
 		rec.add_property(name = "additional_comments", value = AdditionalCommentsKey)
 
