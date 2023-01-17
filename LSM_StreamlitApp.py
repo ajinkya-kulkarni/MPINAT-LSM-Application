@@ -407,6 +407,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		# Upload images to Amazon S3 bucket
 
+		file_name = "ErrorLogs.txt"
+		file_path = os.path.join(os.getcwd(), file_name)
+		if os.path.exists(file_path):
+			os.remove(file_path)
+
 		ErrorLogs = []
 
 		with st.spinner('Uploading the images now. Please wait.'):
@@ -419,6 +424,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 					response = gwdg_client.upload_file(os.path.join(FolderPathKey, single_tiff_file),
 					bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(os.path.join(FolderPathKey, single_tiff_file)))
+
+					print()
 
 				except ClientError as e:
 
