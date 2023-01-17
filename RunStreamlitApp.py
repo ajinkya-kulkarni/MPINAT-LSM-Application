@@ -8,7 +8,7 @@ import packaging.version
 
 os.system('cls||clear')
 
-os.system("echo ''")
+subprocess.run("echo.", shell=True)
 
 #############################################################################
 
@@ -28,7 +28,7 @@ else:
 
 #############################################################################
 
-os.system("echo ''")
+subprocess.run("echo.", shell=True)
 
 #############################################################################
 
@@ -72,109 +72,58 @@ except:
 
 #############################################################################
 
-os.system("echo ''")
+subprocess.run("echo.", shell=True)
 
 # specify the path to the Streamlit app
 app_path = os.path.join(os.getcwd(), file_name)
 
 #############################################################################
 
-# Check if streamlit >= 1.17.0, if not download latest version
-try:
-	current_version = subprocess.check_output(["pip", "show", "streamlit"]).decode("utf-8").split("\n")
-	current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
-	latest_version = subprocess.check_output(["pip", "show", "-v", "streamlit"]).decode("utf-8").split("\n")
-	latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-	if packaging.version.parse(current_version) < packaging.version.parse("1.17.0"):
-		subprocess.run(["pip", "install", "--upgrade", "streamlit"], check=True)
-		print("streamlit package installed successfully")
-	else:
-		print("streamlit package version is already >= 1.17.0")
-except subprocess.CalledProcessError as e:
-	try:
-		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "streamlit"], check=True)
-		print("streamlit package installed successfully")
-	except subprocess.CalledProcessError as e:
-		print("Error: Failed to install streamlit package")
-		print("Error code: ", e.returncode)
-		print("Error message: ", e.output)
+# function to check for latest versions
+def check_and_install(package_name, version, proxy=None):
+    try:
+        current_version = subprocess.check_output(["pip", "show", package_name]).decode("utf-8").split("\n")
+        current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
+        latest_version = subprocess.check_output(["pip", "show", "-v", package_name]).decode("utf-8").split("\n")
+        latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
+        if packaging.version.parse(current_version) < packaging.version.parse(version):
+            if proxy:
+                subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
+            else:
+                subprocess.run(["pip", "install", "--upgrade", package_name], check=True)
+            print(f"{package_name} package installed successfully")
+        else:
+            print(f"{package_name} package version is already >= {version}")
+    except subprocess.CalledProcessError as e:
+        try:
+            if proxy:
+                subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
+            else:
+                subprocess.run(["pip", "install", "--upgrade", package_name], check=True)
+            print(f"{package_name} package installed successfully")
+        except subprocess.CalledProcessError as e:
+            print("Error: Failed to install {package_name} package")
+            print("Error code: ", e.returncode)
+            print("Error message: ", e.output)
 
-# Check if boto3 > 1.26.50, if not download latest version
-try:
-	current_version = subprocess.check_output(["pip", "show", "boto3"]).decode("utf-8").split("\n")
-	current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
-	latest_version = subprocess.check_output(["pip", "show", "-v", "boto3"]).decode("utf-8").split("\n")
-	latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-	if packaging.version.parse(current_version) < packaging.version.parse("1.26.50"):
-		subprocess.run(["pip", "install", "--upgrade", "boto3"], check=True)
-		print("boto3 package installed successfully")
-	else:
-		print("boto3 package version is already >= 1.26.50")
-except subprocess.CalledProcessError as e:
-	try:
-		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "boto3"], check=True)
-		print("boto3 package installed successfully")
-	except subprocess.CalledProcessError as e:
-		print("Error: Failed to install boto3 package")
-		print("Error code: ", e.returncode)
-		print("Error message: ", e.output)
-
-# Check if botocore >= 1.29.50, if not download latest version
-try:
-	current_version = subprocess.check_output(["pip", "show", "botocore"]).decode("utf-8").split("\n")
-	current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
-	latest_version = subprocess.check_output(["pip", "show", "-v", "botocore"]).decode("utf-8").split("\n")
-	latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-	if packaging.version.parse(current_version) < packaging.version.parse("0.10.0"):
-		subprocess.run(["pip", "install", "--upgrade", "botocore"], check=True)
-		print("botocore package installed successfully")
-	else:
-		print("botocore package version is already >=1.29.50")
-except subprocess.CalledProcessError as e:
-	try:
-		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "botocore"], check=True)
-		print("botocore package installed successfully")
-	except subprocess.CalledProcessError as e:
-		print("Error: Failed to install botocore package")
-		print("Error code: ", e.returncode)
-		print("Error message: ", e.output)
-
-# Check if caosdb >= 0.10.0, if not download latest version
-try:
-	current_version = subprocess.check_output(["pip", "show", "caosdb"]).decode("utf-8").split("\n")
-	current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
-	latest_version = subprocess.check_output(["pip", "show", "-v", "caosdb"]).decode("utf-8").split("\n")
-	latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-	if packaging.version.parse(current_version) < packaging.version.parse("0.10.0"):
-		subprocess.run(["pip", "install", "--upgrade", "caosdb"], check=True)
-		print("caosdb package installed successfully")
-	else:
-		print("caosdb package version is already >= 0.10.0")
-except subprocess.CalledProcessError as e:
-	try:
-		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "caosdb"], check=True)
-		print("caosdb package installed successfully")
-	except subprocess.CalledProcessError as e:
-		print("Error: Failed to install caosdb package")
-		print("Error code: ", e.returncode)
-		print("Error message: ", e.output)
+check_and_install("packaging", "23.0")
+check_and_install("streamlit", "1.17.0")
+check_and_install("boto3", "1.26.50")
+check_and_install("botocore", "1.29.50")
+check_and_install("caosdb", "0.10.0")
 
 #############################################################################
 
-os.system("echo ''")
+subprocess.run("echo.", shell=True)
 
 #############################################################################
 
 os.system("echo 'Starting streamlit now...'")
 
-os.system("echo ''")
+subprocess.run("echo.", shell=True)
 
 # run the Streamlit app with the --server.maxUploadSize flag
 # 5000 = 5GB
 subprocess.run(["streamlit", "run", app_path, "--server.maxUploadSize=5000"])
 
 #############################################################################
-
-# @echo off
-# "C:\path\to\python.exe" "C:\path\to\myscript.py"
-# pause
