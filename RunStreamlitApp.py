@@ -124,6 +124,6 @@ subprocess.run("echo.", shell=True)
 
 # run the Streamlit app with the --server.maxUploadSize flag
 # 5000 = 5GB
-subprocess.run(["streamlit", "run", app_path, "--server.maxUploadSize=5000"])
+subprocess.run(["streamlit", "run", app_path, "--server.maxUploadSize=100"])
 
 #############################################################################

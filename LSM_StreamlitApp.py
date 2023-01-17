@@ -151,7 +151,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.date_input("Date of the scanned LSM image(s)", date.today(), key = '-DateKey-')
 
-	st.text_input('Input the path of the folder containing the images', value = 'None', placeholder = 'None', key = '-FolderPathKey-')
+	st.text_input('Input the path of the folder containing the images', placeholder = 'None', key = '-FolderPathKey-')
 
 	###############################################################
 
@@ -236,22 +236,25 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	# Submit the form
 
 	submitted = st.form_submit_button('Submit')
-
-	###############################################################
-
-	FolderPathKey = st.session_state['-FolderPathKey-']
-
-	all_files = os.listdir(FolderPathKey)
-	extensions_allowed = [".tif", ".tiff"]
-	tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
 	
 	###############################################################
 
-	if (submitted and len(tiff_files) > 0):
+	if submitted:
 
 		SampleKey = st.session_state['-SampleIDKey-']
 		if SampleKey is None:
 			st.error('Sample ID or Barcode should not be empty', icon = None)
+			st.stop()
+
+		####################
+
+		FolderPathKey = st.session_state['-FolderPathKey-']
+		extensions_allowed = [".tif", ".tiff"]
+		try:
+			all_files = os.listdir(FolderPathKey)
+			tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
+		except:
+			st.error('Incorrect folder path', icon = None)
 			st.stop()
 
 		####################
