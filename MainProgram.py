@@ -64,6 +64,9 @@ for single_package in which_packages:
 			subprocess.run(["pip", "install", single_package], check=True)
 		except subprocess.CalledProcessError as e:
 			subprocess.run(["pip", "install", single_package, "--proxy", UMG_PROXY], check=True)
+            
+	print(single_package, " package has been installed successfully!")
+
 
 import packaging.version
 

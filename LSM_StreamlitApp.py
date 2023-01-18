@@ -30,27 +30,23 @@
 ###############################################################
 
 import streamlit as st
-
 import caosdb as db
 
 from datetime import date
 import time
-
 import os
 import logging
+import threading
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
-import threading
 
 import boto3
 from botocore.exceptions import ClientError
 
 from PASSWORDS import *
-
 from ProgressPercentageCalculator import *
-
 from SanityChecks import *
 
 import urllib3
@@ -377,11 +373,15 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		del temp_list
 
-		# Check from the function SanityChecks:
+		# Run sanity checks from the function SanityChecks:
 
-		counter = SanityChecks(All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys)
-		if counter > 0:
-			ErrorMessage = st.error('Check the input(s) regarding the Channel(s), Aperture and Exposure Time', icon = None)
+		try:
+
+			SanityChecks(All_Channel_Keys, All_Aperture_Keys, All_ExposureTime_Keys)
+		
+		except ValueError as e:
+			
+			ErrorMessage = st.error(str(e), icon = None)
 			time.sleep(SleepTime)
 			ErrorMessage.empty()
 			st.stop()
@@ -568,11 +568,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		st.info('Uploading images now.')
 
 		#######################################################
-
-		file_name = "ErrorLogs.txt"
-		file_path = os.path.join(os.getcwd(), file_name)
-		if os.path.exists(file_path):
-			os.remove(file_path)
 
 		ProgressBarText = st.empty()
 

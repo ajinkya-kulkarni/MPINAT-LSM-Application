@@ -20,24 +20,24 @@
 
 #############################################################################
 
-# Function which ...
+# Function which checks for erroneous input(s) for Aperture(s), Exposure Time(s) and Active Channels
 
 def SanityChecks(my_list1, my_list2, my_list3):
-
-	counter = 0
-
 	for i in range(len(my_list1)):
-
-		if my_list1[i] == 'Yes':
-
-			if (float(my_list2[i]) < 0 or my_list2[i] == '0' or float(my_list3[i]) < 0 or my_list3[i] == '0'):
-				
-				counter = counter + 1
-
+		is_active = my_list1[i] == 'Yes'
+		aperture = float(my_list2[i])
+		exposure_time = float(my_list3[i])
+		if aperture < 0:
+			raise ValueError("Aperture(s) should be a positive number")
+		if exposure_time < 0:
+			raise ValueError("Exposure Time(s) should be a positive number")
+		if is_active:
+			if aperture == 0:
+				raise ValueError("Aperture(s) should not be 0 for active channels")
+			if exposure_time == 0:
+				raise ValueError("Exposure Time(s) should not be 0 for active channels")
 		else:
-			
-			if (float(my_list2[i]) < 0 or my_list2[i] != '0' or float(my_list3[i]) < 0 or my_list3[i] != '0'):
-				
-				counter = counter + 1
-
-	return counter
+			if aperture != 0:
+				raise ValueError("Aperture(s) should be 0 for non-active channels")
+			if exposure_time != 0:
+				raise ValueError("Exposure Time(s) should be 0 for non-active channels")
