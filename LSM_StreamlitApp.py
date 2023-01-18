@@ -574,8 +574,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		if os.path.exists(file_path):
 			os.remove(file_path)
 
-		ErrorLogs = []
-
 		ProgressBarText = st.empty()
 
 		ProgressBar = st.progress(0)
@@ -595,11 +593,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 			except ClientError as e:
 
-				ErrorLogs.append([str(logging.error(e)), tiff_files[i]])
-
-				ErrorMessage = st.error('Error with uploading images to the Amazon S3 bucket. Please contact the admin(s) for help.', icon = None)
-
-				pass
+				logging.error(e)
 
 			time.sleep(0.1)
 
@@ -608,9 +602,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			ProgressBarText.caption("{}% images uploaded ({} images out of {} images)".format(int(100*(i+1)/len(tiff_files)), i+1, len(tiff_files)))
 
 		#######################################################
-
-		with open("ErrorLogs.txt", "w") as output:
-			output.write(str(ErrorLogs))
 
 		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 

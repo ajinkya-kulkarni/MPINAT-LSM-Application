@@ -106,7 +106,7 @@ print()
 
 #############################################################################
 
-# Check if the last commit is made 10 mins back (according to GitHub cache. If yes, wait for 5 mins before passed)
+# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
 
 import requests
 
@@ -129,9 +129,9 @@ now = datetime.utcnow()
 # calculate the time elapsed
 elapsed = now - last_commit_datetime
 
-if (elapsed.seconds < 600):
-	raise Exception("Code updated recently by the Admin(s). Please wait for 5 minutes and try again.")
-	
+if (elapsed.seconds < 500):
+	raise Exception("Code updated recently by the Admin(s). Please wait for 10 minutes and try again.")
+
 #############################################################################
 
 # Remove existing files if they exist
