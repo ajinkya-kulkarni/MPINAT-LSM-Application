@@ -26,6 +26,8 @@ import subprocess
 import json
 from datetime import datetime
 
+import packaging.version
+
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 sys.tracebacklimit = 0
@@ -49,28 +51,6 @@ if not os.path.exists(file_path):
     raise Exception(f"{file_name} does not exist in the current directory")
 
 from PASSWORDS import *
-
-#############################################################################
-
-# First check and install packaging == 23.0 and requests == 2.28.2
-
-which_packages = ['packaging==23.0']
-
-for single_package in which_packages:
-    try:
-        subprocess.run(["pip", "install", single_package], check=True)
-    except subprocess.CalledProcessError as e:
-        subprocess.run(["pip", "install", single_package, "--proxy", UMG_PROXY], check=True)
-
-    print("Latest", single_package, "package installed successfully")
-
-#############################################################################
-
-print()
-
-#############################################################################
-
-import packaging.version
 
 # Check for package versions and update them if necessary
 
@@ -105,6 +85,7 @@ check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
 check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
 check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
 check_and_install("requests", "2.28.2", proxy=UMG_PROXY)
+check_and_install("packaging", "23.0", proxy=UMG_PROXY)
 
 #############################################################################
 
