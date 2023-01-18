@@ -12,6 +12,8 @@ sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
 UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
 
+#############################################################################
+
 # First check and install packaging
 
 try:
@@ -21,12 +23,6 @@ except subprocess.CalledProcessError as e:
 		subprocess.run(["pip", "install", "packaging"], check=True)
 	except subprocess.CalledProcessError as e:
 		subprocess.run(["pip", "install", "packaging", "--proxy", UMG_PROXY], check=True)
-
-#############################################################################
-
-os.system('cls||clear')
-
-print()
 
 #############################################################################
 
@@ -55,8 +51,7 @@ def check_and_delete(file_name):
         os.remove(file_path)
         print(f"Deleted old {file_name}")
 
-file_names = ["CheckAndInstallPackages.py", 
-"DownloadURL.py",
+file_names = ["CheckAndInstallPackages.py",
 "LSM_StreamlitApp.py", 
 "ProgressPercentageCalculator.py",
 "SanityChecks.py",
@@ -64,6 +59,10 @@ file_names = ["CheckAndInstallPackages.py",
 
 for file_name in file_names:
     check_and_delete(file_name)
+
+#############################################################################
+
+print()
 
 #############################################################################
 
