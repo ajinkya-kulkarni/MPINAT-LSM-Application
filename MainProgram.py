@@ -64,9 +64,14 @@ for single_package in which_packages:
 			subprocess.run(["pip", "install", single_package], check=True)
 		except subprocess.CalledProcessError as e:
 			subprocess.run(["pip", "install", single_package, "--proxy", UMG_PROXY], check=True)
-            
-	print(single_package, " package has been installed successfully!")
 
+	print("Latest", single_package, "package installed successfully")
+
+#############################################################################
+
+print()
+
+#############################################################################
 
 import packaging.version
 
@@ -216,6 +221,6 @@ print()
 
 # run the Streamlit app with the --server.maxUploadSize flag
 # For example, 5000 = 5GB
-subprocess.run(["streamlit", "run", app_path, "--server.maxUploadSize=100"])
+subprocess.run(['streamlit', 'run', app_path, '--server.maxUploadSize=100 --theme.base="light"'])
 
 #############################################################################

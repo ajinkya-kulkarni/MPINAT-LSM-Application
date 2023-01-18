@@ -58,7 +58,7 @@ SleepTime = 5
 
 # Some initial config info regarding the web app
 
-st.set_page_config(page_title = 'LSM Application', page_icon = None, layout = "centered", initial_sidebar_state = "expanded", menu_items = {'Get help': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'Report a bug': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'About': 'This is a webpage for uploading the LSM images and the metadata used in the ABA project at the MPI-NAT, Goettingen. Developed, tested and maintained by Ajinkya Kulkarni: https://github.com/ajinkya-kulkarni and reachable at mailto:ajinkya.kulkarni@mpinat.mpg.de'
+st.set_page_config(page_title = 'LSM Application', page_icon = None, layout = "wide", initial_sidebar_state = "expanded", menu_items = {'Get help': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'Report a bug': 'mailto:ajinkya.kulkarni@mpinat.mpg.de', 'About': 'This is a webpage for uploading the LSM images and the metadata used in the ABA project at the MPI-NAT, Goettingen. Developed, tested and maintained by Ajinkya Kulkarni: https://github.com/ajinkya-kulkarni and reachable at mailto:ajinkya.kulkarni@mpinat.mpg.de'
 })
 
 # Title of the web app
