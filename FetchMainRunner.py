@@ -85,10 +85,12 @@ script_path = os.path.join(os.getcwd(), script_file_name)
 
 os.system("echo 'Starting MainRunner now...'")
 
-subprocess.run(["python", script_path])
-
 #############################################################################
 
 print()
+
+#############################################################################
+
+subprocess.run(["python", script_path])
 
 #############################################################################
