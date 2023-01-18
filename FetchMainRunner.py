@@ -5,6 +5,8 @@ import subprocess
 
 #############################################################################
 
+# Clear the screen
+
 os.system('cls||clear')
 
 print()
@@ -30,6 +32,8 @@ file_names = ["MainRunner.py"]
 
 for file_name in file_names:
     check_and_delete(file_name)
+
+# Remove ErrorLogs.txt
 
 check_and_delete("ErrorLogs.txt")
 
@@ -78,11 +82,12 @@ print()
 
 #############################################################################
 
-# Run MainRunner.py
+# Define MainRunner.py
 
 script_file_name = "MainRunner.py"
 
-# specify the path to the Streamlit app
+# specify the path to the MainRunner.py file
+
 script_path = os.path.join(os.getcwd(), script_file_name)
 
 os.system("echo 'Starting MainRunner now...'")
@@ -92,6 +97,8 @@ os.system("echo 'Starting MainRunner now...'")
 print()
 
 #############################################################################
+
+# Run MainRunner.py
 
 subprocess.run(["python", script_path])
 
