@@ -51,17 +51,21 @@ from PASSWORDS import *
 
 #############################################################################
 
-# First check and install packaging
+# First check and install packaging and requests
 
-try:
-	subprocess.run(["pip", "show", "packaging"], check=True, stdout=subprocess.DEVNULL)
-except subprocess.CalledProcessError as e:
+which_packages = ['packaging', 'requests']
+
+for single_package in which_packages:
+
 	try:
-		subprocess.run(["pip", "install", "packaging"], check=True)
+		subprocess.run(["pip", "show", single_package], check=True, stdout=subprocess.DEVNULL)
 	except subprocess.CalledProcessError as e:
-		subprocess.run(["pip", "install", "packaging", "--proxy", UMG_PROXY], check=True)
+		try:
+			subprocess.run(["pip", "install", single_package], check=True)
+		except subprocess.CalledProcessError as e:
+			subprocess.run(["pip", "install", single_package, "--proxy", UMG_PROXY], check=True)
 
-from packaging import version
+import packaging.version
 
 # Check for package versions and update them if necessary
 
@@ -71,7 +75,7 @@ def check_and_install(package_name, version, proxy=None):
         current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
         latest_version = subprocess.check_output(["pip", "show", "-v", package_name]).decode("utf-8").split("\n")
         latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-        if version.parse(current_version) < version.parse(version):
+        if packaging.version.parse(current_version) < packaging.version.parse(version):
             if proxy:
                 subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
             else:
@@ -91,12 +95,14 @@ def check_and_install(package_name, version, proxy=None):
             print("Error code: ", e.returncode)
             print("Error message: ", e.output)
 
-check_and_install("requests", "2.28.2", proxy=UMG_PROXY)
-check_and_install("packaging", "23.0", proxy=UMG_PROXY)
 check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
 check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
 check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
 check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
+
+#############################################################################
+
+print()
 
 #############################################################################
 
@@ -137,8 +143,7 @@ def check_and_delete(file_name):
         os.remove(file_path)
         print(f"Deleted old {file_name}")
 
-file_names = ["DownloadURL.py",
-"LSM_StreamlitApp.py", 
+file_names = ["LSM_StreamlitApp.py", 
 "ProgressPercentageCalculator.py",
 "SanityChecks.py",
 ]
@@ -152,9 +157,40 @@ check_and_delete("ErrorLogs.txt")
 
 #############################################################################
 
+print()
+
+#############################################################################
+
 # And then download them fom GitHub repo
 
-from DownloadURL import *
+def download_file(url, proxy=UMG_PROXY):
+    """
+    Download a file from the specified URL.
+    :param url: The URL of the file to download.
+    :param proxy: (optional) The proxy to use for the download.
+    """
+    # specify the file name
+    file_name = url.split("/")[-1]
+    try:
+        # download the file and save it to a local file
+        urllib.request.urlretrieve(url, file_name)
+        print(f"Latest {file_name} fetched successfully")
+    except urllib.error.HTTPError as e:
+        print(f"HTTP Error: {e.code} {e.reason}")
+        if proxy:
+            try:
+                # specify the proxy
+                proxy_support = urllib.request.ProxyHandler({'http': proxy})
+                opener = urllib.request.build_opener(proxy_support)
+                urllib.request.install_opener(opener)
+                # download the file and save it to a local file
+                urllib.request.urlretrieve(url, file_name)
+                print(f"Latest {file_name} fetched successfully")
+            except:
+                urllib.request.install_opener(None)
+                print("Failed to fetch the file with proxy")
+        else:
+            print("Failed to fetch the file without proxy")
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 

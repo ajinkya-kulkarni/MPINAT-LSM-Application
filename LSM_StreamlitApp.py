@@ -280,7 +280,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Submit the form
 
-	submitted = st.form_submit_button('Submit')
+	submitted = st.form_submit_button('Submit', help = 'This will submit and clear the form')
 
 	st.markdown("""---""")
 	
@@ -551,7 +551,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 			time.sleep(0.1)
 			ProgressBar.progress(percent_complete + 1)
-			ProgressBarText.caption(f'{percent_complete + 1} % metadata uploaded')
+			ProgressBarText.caption(f'{percent_complete + 1}% metadata uploaded')
 
 		SuccessMessageMetadata = st.success('Successfully uploaded metadata, please wait while the images are uploaded.')
 
@@ -582,8 +582,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		for i in range(len(tiff_files)):
 
-			ProgressBarText.caption(f'{int(100*i/len(tiff_files))} % images uploaded')
-
 			amazon_bucket_target_name = SampleKey + '/' + str(tiff_files[i])
 
 			response = []
@@ -606,8 +604,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			time.sleep(0.1)
 
 			ProgressBar.progress((i+1)/len(tiff_files))
-		
-		ProgressBarText.caption(f'{int(100*(i+1)/len(tiff_files))} % images uploaded')
+
+			ProgressBarText.caption("{}% images uploaded ({} images out of {} images)".format(int(100*(i+1)/len(tiff_files)), i+1, len(tiff_files)))
 
 		#######################################################
 
