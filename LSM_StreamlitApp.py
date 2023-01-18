@@ -153,6 +153,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.text_input('Sample ID or Barcode (*mandatory)', key = '-SampleIDKey-')
 
+	# Test Sample ID = TestSample_0
+
 	# Date selection widget
 
 	st.date_input("Date when the LSM image(s) were scanned", date.today(), key = '-DateKey-')
@@ -536,7 +538,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		except:
 			
-			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Check the SampleID/Barcode again or  contact the admin(s) for help.', icon = None)
+			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Check the Sample ID/Barcode again or  contact the admin(s) for help.', icon = None)
 			time.sleep(SleepTime)
 			ErrorMessage.empty()			
 			st.stop()
