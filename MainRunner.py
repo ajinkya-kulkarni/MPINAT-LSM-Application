@@ -69,7 +69,7 @@ for file_name in file_names:
 
 # And then download them fom GitHub repo
 
-def download_file(url, proxy=None):
+def download_file(url, proxy=UMG_PROXY):
     """
     Download a file from the specified URL.
     :param url: The URL of the file to download.

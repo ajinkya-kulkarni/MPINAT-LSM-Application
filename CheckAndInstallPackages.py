@@ -1,5 +1,5 @@
 import subprocess
-import packaging
+import packaging.version
 
 def check_and_install(package_name, version, proxy=None):
     try:
