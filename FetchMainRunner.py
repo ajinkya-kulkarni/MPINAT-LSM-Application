@@ -1,6 +1,7 @@
 
 import os
 import urllib.request
+import subprocess
 
 #############################################################################
 
@@ -72,3 +73,22 @@ for file_name in file_names:
 #############################################################################
 
 print()
+
+#############################################################################
+
+# Run MainRunner.py
+
+script_file_name = "MainRunner.py"
+
+# specify the path to the Streamlit app
+script_path = os.path.join(os.getcwd(), script_file_name)
+
+os.system("echo 'Starting MainRunner now...'")
+
+subprocess.run(["python", script_path])
+
+#############################################################################
+
+print()
+
+#############################################################################
