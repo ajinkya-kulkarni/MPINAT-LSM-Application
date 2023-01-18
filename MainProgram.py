@@ -52,21 +52,17 @@ from PASSWORDS import *
 
 #############################################################################
 
-# First check and install packaging and requests
+# First check and install packaging == 23.0 and requests == 2.28.2
 
-which_packages = ['packaging', 'requests']
+which_packages = ['packaging==23.0']
 
 for single_package in which_packages:
+    try:
+        subprocess.run(["pip", "install", single_package], check=True)
+    except subprocess.CalledProcessError as e:
+        subprocess.run(["pip", "install", single_package, "--proxy", UMG_PROXY], check=True)
 
-	try:
-		subprocess.run(["pip", "show", single_package], check=True, stdout=subprocess.DEVNULL)
-	except subprocess.CalledProcessError as e:
-		try:
-			subprocess.run(["pip", "install", single_package], check=True)
-		except subprocess.CalledProcessError as e:
-			subprocess.run(["pip", "install", single_package, "--proxy", UMG_PROXY], check=True)
-
-	print("Latest", single_package, "package installed successfully")
+    print("Latest", single_package, "package installed successfully")
 
 #############################################################################
 
@@ -108,6 +104,7 @@ check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
 check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
 check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
 check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
+check_and_install("requests", "2.28.2", proxy=UMG_PROXY)
 
 #############################################################################
 
