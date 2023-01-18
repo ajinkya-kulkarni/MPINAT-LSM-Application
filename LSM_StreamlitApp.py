@@ -288,7 +288,10 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	if submitted:
 
 		SampleKey = st.session_state['-SampleIDKey-']
-		if ((SampleKey is None) or ("")):
+
+		print(SampleKey)
+		
+		if SampleKey is None:
 			
 			ErrorMessage = st.error('Sample ID or Barcode should not be empty', icon = None)
 			time.sleep(SleepTime)
@@ -533,7 +536,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		except:
 			
-			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Please contact the admin(s) for help.', icon = None)
+			ErrorMessage = st.error('Error with inserting records in the Linkahead DB. Check the SampleID/Barcode again or  contact the admin(s) for help.', icon = None)
 			time.sleep(SleepTime)
 			ErrorMessage.empty()			
 			st.stop()
