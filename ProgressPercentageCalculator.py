@@ -5,8 +5,6 @@ sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 import os
 import threading
 
-#######################################################################
-
 # Functions to get size of file transferred to S3 buckets.
 
 class ProgressPercentage(object):
