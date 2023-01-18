@@ -292,7 +292,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		SampleKey = st.session_state['-SampleIDKey-']
 
-		if str(SampleKey) is "":
+		if (str(SampleKey) == ""):
 
 			ErrorMessage = st.error('Sample ID or Barcode should not be empty', icon = None)
 			time.sleep(SleepTime)
