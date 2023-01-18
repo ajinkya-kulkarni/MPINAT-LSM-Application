@@ -156,6 +156,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.text_input('Sample ID or Barcode (*mandatory)', key = '-SampleIDKey-')
 
+	# st.text_input('Sample ID or Barcode (*mandatory)', 'TestSample_0', key = '-SampleIDKey-')
+
+
 	# Date selection widget
 
 	st.date_input("Date when the LSM image(s) were scanned", date.today(), key = '-DateKey-')
