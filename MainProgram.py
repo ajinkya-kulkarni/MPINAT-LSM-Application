@@ -222,6 +222,6 @@ print()
 
 # run the Streamlit app with the --server.maxUploadSize flag
 # For example, 5000 = 5GB
-subprocess.run(['streamlit', 'run', app_path, '--server.maxUploadSize=100 --theme.base="light"'])
+subprocess.run(['streamlit', 'run', app_path, '--server.maxUploadSize=100'])
 
 #############################################################################
