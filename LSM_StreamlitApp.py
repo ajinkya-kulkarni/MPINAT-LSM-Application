@@ -154,8 +154,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.selectbox('Select the person', ComboNames, label_visibility = "visible", key = '-PersonKey-')
 
-	st.text_input('Sample ID or Barcode (*mandatory)', 
-	'TestSample_0', key = '-SampleIDKey-')
+	st.text_input('Sample ID or Barcode (*mandatory)', key = '-SampleIDKey-')
 
 	# Date selection widget
 
@@ -610,7 +609,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
-		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Refresh the page to start a new upload.')
+		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Close the program to start a new upload.')
 
 		st.stop()
 
