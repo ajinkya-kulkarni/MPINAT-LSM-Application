@@ -21,17 +21,35 @@
 #############################################################################
 
 import os
-import subprocess
 import urllib.request
+import subprocess
+import json
+from datetime import datetime
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
 #############################################################################
 
-# Define the proxy server
+# Clear the screen
 
-UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
+os.system('cls||clear')
+
+print()
+
+#############################################################################
+
+# Check if the PASSWORDS file exists in the current directory, else LSM_StreamlitApp.py will fail
+
+file_name = "PASSWORDS.py"
+file_path = os.path.join(os.getcwd(), file_name)
+
+if not os.path.exists(file_path):
+    raise Exception(f"{file_name} does not exist in the current directory")
+else:
+	print(f"{file_name} exists in the current directory")
+
+from PASSWORDS import *
 
 #############################################################################
 
@@ -45,25 +63,48 @@ except subprocess.CalledProcessError as e:
 	except subprocess.CalledProcessError as e:
 		subprocess.run(["pip", "install", "packaging", "--proxy", UMG_PROXY], check=True)
 
-#############################################################################
+# Check for package versions and update them if necessary
 
-# Sheck if the PASSWORDS file exists in the current directory, else LSM_StreamlitApp.py will fail
+from CheckAndInstallPackages import *
 
-file_name = "PASSWORDS.py"
-file_path = os.path.join(os.getcwd(), file_name)
-
-if not os.path.exists(file_path):
-    raise Exception(f"{file_name} does not exist in the current directory")
-else:
-	print(f"{file_name} exists in the current directory")
-
-#############################################################################
-
-print()
+check_and_install("requests", "2.28.2", proxy=UMG_PROXY)
+check_and_install("packaging", "23.0", proxy=UMG_PROXY)
+check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
+check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
+check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
+check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
 
 #############################################################################
 
-# Remove existing .py files if they exist
+# Check if the last commit is made 10 mins back (according to GitHub cache. If yes, wait for 5 mins before passed)
+
+import requests
+
+repo_name = "MPINAT-LSM-Application"
+repo_owner = "ajinkya-kulkarni"
+
+try:
+	response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}", proxies=UMG_PROXY)
+	data = json.loads(response.text)
+	last_commit_time = data['pushed_at']
+except:
+	response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}")
+	data = json.loads(response.text)
+	last_commit_time = data['pushed_at']
+
+# parse the timestamp to a datetime object
+last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
+# get the current time
+now = datetime.utcnow()
+# calculate the time elapsed
+elapsed = now - last_commit_datetime
+
+if (elapsed.seconds < 600):
+	raise Exception('Code updated recently. Please wait for 5 minutes.')
+
+#############################################################################
+
+# Remove existing files if they exist
 
 def check_and_delete(file_name):
     file_path = os.path.join(os.getcwd(), file_name)
@@ -81,64 +122,21 @@ file_names = ["CheckAndInstallPackages.py",
 for file_name in file_names:
     check_and_delete(file_name)
 
-#############################################################################
+# Remove ErrorLogs.txt
 
-print()
+check_and_delete("ErrorLogs.txt")
 
 #############################################################################
 
 # And then download them fom GitHub repo
 
-def download_file(url, proxy=UMG_PROXY):
-    """
-    Download a file from the specified URL.
-    :param url: The URL of the file to download.
-    :param proxy: (optional) The proxy to use for the download.
-    """
-    # specify the file name
-    file_name = url.split("/")[-1]
-    try:
-        # download the file and save it to a local file
-        urllib.request.urlretrieve(url, file_name)
-        print(f"Latest {file_name} fetched successfully")
-    except urllib.error.HTTPError as e:
-        print(f"HTTP Error: {e.code} {e.reason}")
-        if proxy:
-            try:
-                # specify the proxy
-                proxy_support = urllib.request.ProxyHandler({'http': proxy})
-                opener = urllib.request.build_opener(proxy_support)
-                urllib.request.install_opener(opener)
-                # download the file and save it to a local file
-                urllib.request.urlretrieve(url, file_name)
-                print(f"Latest {file_name} fetched successfully")
-            except:
-                urllib.request.install_opener(None)
-                print("Failed to fetch the file with proxy")
-        else:
-            print("Failed to fetch the file without proxy")
+from DownloadURL import *
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
 for file_name in file_names:
     url = f"{base_url}{file_name}"
     download_file(url, UMG_PROXY)
-
-#############################################################################
-
-print()
-
-#############################################################################
-
-# Check for package versions and update them if necessary
-
-from CheckAndInstallPackages import *
-
-check_and_install("packaging", "23.0", proxy=UMG_PROXY)
-check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
-check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
-check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
-check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
 
 #############################################################################
 

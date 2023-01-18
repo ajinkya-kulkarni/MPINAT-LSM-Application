@@ -20,47 +20,7 @@
 
 #############################################################################
 
-import os
-import urllib.request
-import subprocess
-
-#############################################################################
-
-# Clear the screen
-
-os.system('cls||clear')
-
-print()
-
-#############################################################################
-
-# Define the proxy server
-
-UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
-
-#############################################################################
-
-# Remove existing files if they exist
-
-def check_and_delete(file_name):
-    file_path = os.path.join(os.getcwd(), file_name)
-
-    if os.path.exists(file_path):
-        os.remove(file_path)
-        print(f"Deleted old {file_name}")
-
-file_names = ["MainRunner.py"]
-
-for file_name in file_names:
-    check_and_delete(file_name)
-
-# Remove ErrorLogs.txt
-
-check_and_delete("ErrorLogs.txt")
-
-#############################################################################
-
-# And then download them fom GitHub repo
+import urllib
 
 def download_file(url, proxy=UMG_PROXY):
     """
@@ -90,37 +50,3 @@ def download_file(url, proxy=UMG_PROXY):
                 print("Failed to fetch the file with proxy")
         else:
             print("Failed to fetch the file without proxy")
-
-base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
-
-for file_name in file_names:
-    url = f"{base_url}{file_name}"
-    download_file(url, UMG_PROXY)
-
-#############################################################################
-
-print()
-
-#############################################################################
-
-# Define MainRunner.py
-
-script_file_name = "MainRunner.py"
-
-# specify the path to the MainRunner.py file
-
-script_path = os.path.join(os.getcwd(), script_file_name)
-
-os.system("echo 'Starting MainRunner now...'")
-
-#############################################################################
-
-print()
-
-#############################################################################
-
-# Run MainRunner.py
-
-subprocess.run(["python", script_path])
-
-#############################################################################
