@@ -130,7 +130,7 @@ now = datetime.utcnow()
 elapsed = now - last_commit_datetime
 
 if (elapsed.seconds < 500):
-	raise Exception("Code updated recently by the Admin(s). Please wait for 10 minutes and try again.")
+	raise Exception("Code has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
 
 #############################################################################
 
@@ -150,10 +150,6 @@ file_names = ["LSM_StreamlitApp.py",
 
 for file_name in file_names:
     check_and_delete(file_name)
-
-# Remove ErrorLogs.txt
-
-check_and_delete("ErrorLogs.txt")
 
 #############################################################################
 
