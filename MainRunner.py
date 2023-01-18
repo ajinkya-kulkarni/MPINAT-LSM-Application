@@ -140,6 +140,7 @@ check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
 check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
 check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
 check_and_install("urllib3", "1.26.14", proxy=UMG_PROXY)
+check_and_install("numpy", "1.24.1", proxy=UMG_PROXY)
 
 #############################################################################
 
