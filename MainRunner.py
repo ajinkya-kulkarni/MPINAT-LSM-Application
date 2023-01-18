@@ -130,7 +130,9 @@ now = datetime.utcnow()
 elapsed = now - last_commit_datetime
 
 if (elapsed.seconds < 600):
-	raise Exception('Code updated recently. Please wait for 5 minutes.')
+	raise Exception('Code updated recently by the Admin(s). Please wait for 5 minutes and try again.')
+
+	print()
 
 #############################################################################
 
