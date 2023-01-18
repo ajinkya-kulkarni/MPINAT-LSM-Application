@@ -39,15 +39,13 @@ print()
 
 #############################################################################
 
-# Check if the PASSWORDS file exists in the current directory, else LSM_StreamlitApp.py will fail
+# Check if the PASSWORDS file exists in the current directory
 
 file_name = "PASSWORDS.py"
 file_path = os.path.join(os.getcwd(), file_name)
 
 if not os.path.exists(file_path):
     raise Exception(f"{file_name} does not exist in the current directory")
-else:
-	print(f"{file_name} exists in the current directory")
 
 from PASSWORDS import *
 
@@ -63,9 +61,35 @@ except subprocess.CalledProcessError as e:
 	except subprocess.CalledProcessError as e:
 		subprocess.run(["pip", "install", "packaging", "--proxy", UMG_PROXY], check=True)
 
+from packaging import version
+
 # Check for package versions and update them if necessary
 
-from CheckAndInstallPackages import *
+def check_and_install(package_name, version, proxy=None):
+    try:
+        current_version = subprocess.check_output(["pip", "show", package_name]).decode("utf-8").split("\n")
+        current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
+        latest_version = subprocess.check_output(["pip", "show", "-v", package_name]).decode("utf-8").split("\n")
+        latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
+        if version.parse(current_version) < version.parse(version):
+            if proxy:
+                subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
+            else:
+                subprocess.run(["pip", "install", "--upgrade", package_name], check=True)
+            print(f"{package_name} package installed successfully")
+        else:
+            print(f"{package_name} package version is already >= {version}")
+    except subprocess.CalledProcessError as e:
+        try:
+            if proxy:
+                subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
+            else:
+                subprocess.run(["pip", "install", "--upgrade", package_name], check=True)
+            print(f"{package_name} package installed successfully")
+        except subprocess.CalledProcessError as e:
+            print("Error: Failed to install {package_name} package")
+            print("Error code: ", e.returncode)
+            print("Error message: ", e.output)
 
 check_and_install("requests", "2.28.2", proxy=UMG_PROXY)
 check_and_install("packaging", "23.0", proxy=UMG_PROXY)
@@ -113,7 +137,7 @@ def check_and_delete(file_name):
         os.remove(file_path)
         print(f"Deleted old {file_name}")
 
-file_names = ["CheckAndInstallPackages.py",
+file_names = ["DownloadURL.py",
 "LSM_StreamlitApp.py", 
 "ProgressPercentageCalculator.py",
 "SanityChecks.py",
