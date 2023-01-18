@@ -52,6 +52,8 @@ os.system('cls||clear')
 
 UMG_PROXY = 'http://anonymous@astaro01-proxy.med.uni-goettingen.de:8080'
 
+check_and_delete("ErrorLogs.txt")
+
 file_names = ["MainRunner.py"]
 
 check_and_delete(file_names)
