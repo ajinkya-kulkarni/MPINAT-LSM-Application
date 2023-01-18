@@ -36,6 +36,9 @@ import caosdb as db
 from datetime import date
 import time
 
+import urllib3
+urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
+
 import os
 import logging
 
