@@ -129,8 +129,8 @@ now = datetime.utcnow()
 # calculate the time elapsed
 elapsed = now - last_commit_datetime
 
-if (elapsed.seconds < 600):
-	raise Exception('Code updated recently by the Admin(s). Please wait for 5 minutes and try again.')
+if (elapsed.seconds < 300):
+	raise Exception("Code updated recently by the Admin(s). Please wait for {} minutes and try again.".format(int(1.5 * elapsed.seconds / 60)))
 
 	print()
 
