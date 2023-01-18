@@ -39,8 +39,6 @@ import time
 import os
 import logging
 
-import numpy as np
-
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
@@ -355,12 +353,14 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		for i in range(1, len(ChannelNames) + 1):
 			All_Aperture_Keys.append(st.session_state[f'-Aperture{i}Key-'])
 		try:
-			np.float_(All_Aperture_Keys)
+			temp_list = [float(x) for x in All_Aperture_Keys]
 		except:
 			ErrorMessage = st.error('Aperture(s) must be a number', icon = None)
 			time.sleep(SleepTime)
 			ErrorMessage.empty()
 			st.stop()
+
+		del temp_list
 
 		####################
 
@@ -368,12 +368,14 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		for i in range(1, len(ChannelNames) + 1):
 			All_ExposureTime_Keys.append(st.session_state[f'-ExposureTime{i}Key-'])
 		try:
-			np.float_(All_ExposureTime_Keys)
+			temp_list = [float(x) for x in All_ExposureTime_Keys]
 		except:
 			ErrorMessage = st.error('Exposure Time(s) must be a number', icon = None)
 			time.sleep(SleepTime)
 			ErrorMessage.empty()
 			st.stop()
+
+		del temp_list
 
 		# Check from the function SanityChecks:
 

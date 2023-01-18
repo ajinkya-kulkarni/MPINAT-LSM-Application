@@ -21,7 +21,7 @@
 #############################################################################
 
 import subprocess
-import packaging
+from packaging import version
 
 def check_and_install(package_name, version, proxy=None):
     try:
@@ -29,7 +29,7 @@ def check_and_install(package_name, version, proxy=None):
         current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
         latest_version = subprocess.check_output(["pip", "show", "-v", package_name]).decode("utf-8").split("\n")
         latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-        if packaging.version.parse(current_version) < packaging.version.parse(version):
+        if version.parse(current_version) < version.parse(version):
             if proxy:
                 subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
             else:
