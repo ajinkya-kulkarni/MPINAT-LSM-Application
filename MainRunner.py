@@ -56,7 +56,7 @@ file_names = ["CheckAndDeleteFiles.py",
 ]
 
 for file_name in file_names:
-    module_name.check_and_delete(file_name)
+    check_and_delete(file_name)
 
 #############################################################################
 
