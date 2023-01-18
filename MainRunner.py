@@ -47,8 +47,14 @@ print()
 
 # Remove existing .py files if they exist
 
-file_names = ["CheckAndDeleteFiles.py", 
-"CheckAndInstallPackages.py", 
+def check_and_delete(file_name):
+    file_path = os.path.join(os.getcwd(), file_name)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"Deleted old {file_name}")
+
+file_names = ["CheckAndInstallPackages.py", 
 "DownloadURL.py",
 "LSM_StreamlitApp.py", 
 "ProgressPercentageCalculator.py",
@@ -61,6 +67,8 @@ for file_name in file_names:
 #############################################################################
 
 # And then download them fom GitHub repo
+
+from DownloadURL import *
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
@@ -75,6 +83,8 @@ print()
 #############################################################################
 
 # Check for package versions and update them if necessary
+
+from CheckAndInstallPackages import *
 
 check_and_install("packaging", "23.0", proxy=UMG_PROXY)
 check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
