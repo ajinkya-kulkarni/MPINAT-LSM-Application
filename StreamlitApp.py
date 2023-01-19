@@ -362,14 +362,23 @@ with placeholder.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 			FolderPathKey = st.session_state['-FolderPathKey-']
 			extensions_allowed = [".tif", ".tiff"]
-			try:
-				all_files = os.listdir(FolderPathKey)
-				tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
-			except:
-				ErrorMessage = st.error('Incorrect folder path', icon = None)
-				time.sleep(SleepTime)
-				ErrorMessage.empty()
-				st.stop()
+			
+			st.write(FolderPathKey)
+
+			# try:
+			# 	all_files = os.listdir(FolderPathKey)
+			# 	tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
+			# except:
+			# 	ErrorMessage = st.error('Incorrect folder path', icon = None)
+			# 	time.sleep(SleepTime)
+			# 	ErrorMessage.empty()
+			# 	st.stop()
+				
+			all_files = os.listdir(FolderPathKey)
+			st.write(all_files)
+
+			tiff_files = [i for i in all_files if i.endswith(tuple(extensions_allowed))]
+			st.write(tiff_files)
 
 			####################
 
