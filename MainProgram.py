@@ -52,55 +52,22 @@ from PASSWORDS import *
 
 #############################################################################
 
-# First install packaging only if outdated
-
-# https://stackoverflow.com/questions/710609/checking-a-python-module-version-at-runtime
-#
-try:
-	subprocess.run(["pip", "install", "--upgrade", "packaging<=23.0"], check=True)
-except:
-	try:
-		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "packaging<=23.0"], check=True)
-	except:
-		raise Exception('Failed to install packaging package')
-
-import packaging.version
-
-#############################################################################
-
 # Check for package versions and update them if necessary
 
-def check_and_install(package_name, version, proxy=None):
-    try:
-        current_version = subprocess.check_output(["pip", "show", package_name]).decode("utf-8").split("\n")
-        current_version = [line.split(":")[1].strip() for line in current_version if "Version" in line][0]
-        latest_version = subprocess.check_output(["pip", "show", "-v", package_name]).decode("utf-8").split("\n")
-        latest_version = [line.split(":")[1].strip() for line in latest_version if "Version" in line][0]
-        if packaging.version.parse(current_version) < packaging.version.parse(version):
-            if proxy:
-                subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
-            else:
-                subprocess.run(["pip", "install", "--upgrade", package_name], check=True)
-            print(f"{package_name} package installed successfully")
-        else:
-            print(f"{package_name} package version is already >= {version}")
-    except subprocess.CalledProcessError as e:
-        try:
-            if proxy:
-                subprocess.run(["pip", "install", "--upgrade", "--proxy", proxy, package_name], check=True)
-            else:
-                subprocess.run(["pip", "install", "--upgrade", package_name], check=True)
-            print(f"{package_name} package installed successfully")
-        except subprocess.CalledProcessError as e:
-            print("Error: Failed to install {package_name} package")
-            print("Error code: ", e.returncode)
-            print("Error message: ", e.output)
+try:
+    with open("requirements.txt") as f:
+        packages = f.read().splitlines()
+    subprocess.run(["pip", "install"] + packages)
 
-check_and_install("requests", "2.28.1", proxy=UMG_PROXY)
-check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
-check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
-check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
-check_and_install("caosdb", "0.10.0", proxy=UMG_PROXY)
+except Exception as e:
+    print(f"An error occurred: {e}")
+    proxy = UMG_PROXY
+    print(f"Trying to install packages via proxy: {proxy}")
+    try:
+        subprocess.run(["pip", "install", "--proxy", proxy] + packages)
+    except Exception as e:
+        raise Exception(f"An error occurred: {e}")
+        raise Exception("Failed to install packages. Please check your proxy settings and try again.")
 
 #############################################################################
 
