@@ -173,7 +173,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.markdown("")
 
-	st.text_input('Number of channels', key = '-NumberChannelsKey-', value = '0', placeholder = '0')
+	# st.text_input('Number of channels', key = '-NumberChannelsKey-', value = '0', placeholder = '0')
+
+	st.number_input('Number of channels', key = '-NumberChannelsKey-', min_value = 0, max_value = len(ChannelNames), value = 0, step = 1, format = '%d')
 
 	st.markdown("")
 
@@ -322,14 +324,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		####################
 
 		NumberChannelsKey = st.session_state['-NumberChannelsKey-']
-		try:
-			type(int(NumberChannelsKey))
-		except:
-			ErrorMessage = st.error('Channel number should be an integer', icon = None)
-			time.sleep(SleepTime)
-			ErrorMessage.empty()
-			st.stop()
-		
 		if (int(NumberChannelsKey) != int(Active_Channels)):
 			ErrorMessage = st.error('Number of channels should be equal to the number of "Yes" for the active channels', icon = None)
 			time.sleep(SleepTime)
