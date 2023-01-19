@@ -117,8 +117,6 @@ st.markdown("")
 
 with st.form(key = 'PASSWORDS_FORM_KEY', clear_on_submit = True):
 
-# with st.form(key = 'passwords-form', clear_on_submit = True):
-
 	st.subheader(':blue[Upload the passwords file to continue]')
 
 	passwords = st.file_uploader('Select the file file containing the passwords', type = ['txt'], label_visibility = "collapsed", accept_multiple_files = False)
