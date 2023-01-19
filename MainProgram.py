@@ -26,8 +26,6 @@ import subprocess
 import json
 from datetime import datetime
 
-import packaging.version
-
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 sys.tracebacklimit = 0
@@ -51,6 +49,24 @@ if not os.path.exists(file_path):
     raise Exception(f"{file_name} does not exist in the current directory")
 
 from PASSWORDS import *
+
+#############################################################################
+
+# First install packaging only if outdated
+
+# https://stackoverflow.com/questions/710609/checking-a-python-module-version-at-runtime
+#
+try:
+	subprocess.run(["pip", "install", "--upgrade", "packaging<=23.0"], check=True)
+except:
+	try:
+		subprocess.run(["pip", "install", "--upgrade", "--proxy", UMG_PROXY, "packaging<=23.0"], check=True)
+	except:
+		raise Exception('Failed to install packaging package')
+
+import packaging.version
+
+#############################################################################
 
 # Check for package versions and update them if necessary
 
@@ -80,9 +96,7 @@ def check_and_install(package_name, version, proxy=None):
             print("Error code: ", e.returncode)
             print("Error message: ", e.output)
 
-check_and_install("requests", "2.28.2", proxy=UMG_PROXY)
-check_and_install("packaging", "23.0", proxy=UMG_PROXY)
-
+check_and_install("requests", "2.28.1", proxy=UMG_PROXY)
 check_and_install("streamlit", "1.17.0", proxy=UMG_PROXY)
 check_and_install("boto3", "1.26.50", proxy=UMG_PROXY)
 check_and_install("botocore", "1.29.50", proxy=UMG_PROXY)
