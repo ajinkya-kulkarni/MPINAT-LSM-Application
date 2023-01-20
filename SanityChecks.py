@@ -20,7 +20,7 @@
 
 #############################################################################
 
-# Function which checks for erroneous input(s) for Aperture(s), Exposure Time(s) and Active Channels
+# Function which checks for erroneous input(s) for Aperture(s), Exposure Time(s) and Active Channels and returns the appropriate exception
 
 def SanityChecks(my_list1, my_list2, my_list3):
 	for i in range(len(my_list1)):

@@ -28,7 +28,7 @@ from datetime import datetime
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
-sys.tracebacklimit = 0
+sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 
 #############################################################################
 
@@ -182,6 +182,6 @@ print()
 
 # run the Streamlit app with the --server.maxUploadSize flag
 # For example, 5000 = 5GB
-subprocess.run(['streamlit', 'run', app_path, '--server.maxUploadSize=100'])
+subprocess.run(['streamlit', 'run', app_path])
 
 #############################################################################

@@ -24,11 +24,6 @@
 
 ###############################################################
 
-# Run this script from the terminal as:
-# streamlit run LSM_StreamlitApp.py --server.maxUploadSize 5000 # Max size of each uploaded file is 5000mb
-
-###############################################################
-
 import streamlit as st
 import caosdb as db
 
@@ -41,16 +36,15 @@ import threading
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 
-
 import boto3
 from botocore.exceptions import ClientError
+
+import urllib3
+urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
 
 from PASSWORDS import *
 from ProgressPercentageCalculator import *
 from SanityChecks import *
-
-import urllib3
-urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
 
 #######################################################################
 
@@ -101,11 +95,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		except:
 			
 			ErrorMessage = st.error('Unsuccessful connection with the Linkahead DB. Contact the admin(s) for help.', icon = None)
-
 			time.sleep(SleepTime)
-
 			ErrorMessage.empty()
-
 			st.stop()
 
 	###############################################################
@@ -113,13 +104,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	# Information regarding the Amazon S3 bucket
 
 	access_key = AMAZON_S3_ACCESS_KEY
-
 	secret_key = AMAZON_S3_SECRET_KEY
-
 	bucket_name = AMAZON_S3_BUCKET
-
 	gwdg_client = boto3.client('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = access_key, aws_secret_access_key = secret_key)
-
 	gwdg = boto3.resource('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = access_key, aws_secret_access_key = secret_key)
 
 	###############################################################
@@ -159,7 +146,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.date_input("Date when the LSM image(s) were scanned", date.today(), key = '-DateKey-')
 
-	st.text_input('Write the path of the folder containing the images', key = '-FolderPathKey-')
+	st.text_input('Write the path of the folder containing the images', value = "", key = '-FolderPathKey-')
+
+	st.caption('Only tif or tiff images allowed', unsafe_allow_html = False)
 
 	###############################################################
 
@@ -172,8 +161,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	st.caption('Number of channels should be more than 0 and equal to the number of "Yes" for the active channels', unsafe_allow_html = False)
 
 	st.markdown("")
-
-	# st.text_input('Number of channels', key = '-NumberChannelsKey-', value = '0', placeholder = '0')
 
 	st.number_input('Number of channels', key = '-NumberChannelsKey-', min_value = 0, max_value = len(ChannelNames), value = 0, step = 1, format = '%d')
 
@@ -221,6 +208,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.markdown("""---""")
 
+	###############################################################
+
 	st.subheader(':blue[Fill in the resolution information]')
 
 	left_column3, right_column3  = st.columns(2)
@@ -263,7 +252,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.markdown("")
 
-	st.slider('Sheet Width (%)', min_value = 0, max_value = 100, value = 0, step = 5, label_visibility = "visible", key = '-SheetWidthKey-')
+	st.slider('Sheet Width (%)', min_value = 0, max_value = 100, value = 0, step = 5, format = '%d', label_visibility = "visible", key = '-SheetWidthKey-')
 
 	st.markdown("""---""")
 
@@ -438,7 +427,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		###############################################################
 
-		# Start executing the form
+		# Start executing the form now that all sanity checks are completed
 
 		PersonKey = st.session_state['-PersonKey-']
 		DateKey = st.session_state['-DateKey-']
@@ -592,6 +581,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		#######################################################
 
 		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
+
+		with open('uploaded_files_to_S3.txt', 'w') as f:
+			f.write(str(uploaded_files_to_S3))
 
 		#######################################################
 

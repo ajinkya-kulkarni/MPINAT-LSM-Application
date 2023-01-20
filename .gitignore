@@ -1,5 +1,3 @@
-
 .DS_Store
 PASSWORDS.py
-FAKE_PASSWORDS.txt
-PASSWORDS.txt
+uploaded_files_to_S3.txt
