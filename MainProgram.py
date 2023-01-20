@@ -59,12 +59,17 @@ try:
         packages = f.read().splitlines()
     subprocess.run(["pip", "install"] + packages)
 
+    os.system('cls||clear')
+
 except Exception as e:
     print(f"An error occurred: {e}")
     proxy = UMG_PROXY
     print(f"Trying to install packages via proxy: {proxy}")
     try:
         subprocess.run(["pip", "install", "--proxy", proxy] + packages)
+
+        os.system('cls||clear')
+
     except Exception as e:
         raise Exception(f"An error occurred: {e}")
         raise Exception("Failed to install packages. Please check your proxy settings and try again.")

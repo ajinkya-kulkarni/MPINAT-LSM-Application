@@ -135,7 +135,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.selectbox('Select the person', ComboNames, label_visibility = "visible", key = '-PersonKey-')
 
-	st.text_input('Sample ID or Barcode (*mandatory)', key = '-SampleIDKey-')
+	st.text_input('Sample ID or Barcode', key = '-SampleIDKey-')
 
 	# Test Sample ID = TestSample_0
 
@@ -155,7 +155,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.subheader(':blue[Fill in information regarding the channels]')
 
-	st.caption('Number of channels should be more than 0 and equal to the number of "Yes" for the active channels', unsafe_allow_html = False)
+	st.caption('Number of channels should be more than 0 and equal to the number of active channels.', unsafe_allow_html = False)
+
+	st.caption('Aperture(s) and Exposure Time(s) must be filled for active channels.', unsafe_allow_html = False)
 
 	st.markdown("")
 
@@ -189,7 +191,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.subheader(':blue[Select illumination information]')
 
-	st.caption('selecting at least one is mandatory', unsafe_allow_html = False)
+	st.caption('Selecting at least one is mandatory', unsafe_allow_html = False)
 
 	st.markdown("")
 
@@ -213,11 +215,15 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	with left_column3:
 
-		st.number_input('Resolution in XY Plane (*mandatory, micro m)', key = '-ResolutionInXYPlaneKey-', min_value = 0.0, value = 0.0, step = 0.1, format = '%0.1f')
+		st.number_input('Resolution in XY Plane (micro m)', key = '-ResolutionInXYPlaneKey-', min_value = 0.0, value = 0.0, step = 0.1, format = '%0.1f')
+		st.caption('Resolution in XY Plane must be more than 0', unsafe_allow_html = False)
+		st.markdown("")
 
 	with right_column3:
 
-		st.number_input('Resolution in Z direction (*mandatory, micro m)', key = '-ResolutionZDirectionKey-', min_value = 0.0, value = 0.0, step = 0.1, format = '%0.1f')
+		st.number_input('Resolution in Z direction (micro m)', key = '-ResolutionZDirectionKey-', min_value = 0.0, value = 0.0, step = 0.1, format = '%0.1f')
+		st.caption('Resolution in Z direction must be more than 0', unsafe_allow_html = False)
+		st.markdown("")
 
 	st.markdown("""---""")
 
@@ -245,7 +251,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	st.subheader(':blue[Select Sheet Width information]')
 
-	st.caption('Sheet Width should be more than 0%', unsafe_allow_html = False)
+	st.caption('Sheet Width must be more than 0%', unsafe_allow_html = False)
 
 	st.markdown("")
 
