@@ -538,14 +538,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		#######################################################
 
 		ProgressBarText = st.empty()
-
 		ProgressBar = st.progress(0)
 
 		for i in range(len(tiff_files)):
 
 			amazon_bucket_target_name = SampleKey + '/' + str(tiff_files[i])
-
-			response = []
 
 			try:
 
@@ -554,24 +551,25 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 				print()
 
+				time.sleep(0.1)
+
+				ProgressBar.progress((i+1)/len(tiff_files))
+
+				ProgressBarText.caption("{}% images uploaded ({} images out of {} images)".format(int(100*(i+1)/len(tiff_files)), i+1, len(tiff_files)))
+
 			except ClientError as e:
-
-				logging.error(e)
-
+				
+				logger.error("Failed to upload %s", tiff_file, exc_info=True)
 				pass # so that as many as possible files are uploaded
 
-			time.sleep(0.1)
-
-			ProgressBar.progress((i+1)/len(tiff_files))
-
-			ProgressBarText.caption("{}% images uploaded ({} images out of {} images)".format(int(100*(i+1)/len(tiff_files)), i+1, len(tiff_files)))
+		gwdg_client.close()
 
 		#######################################################
 
 		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 
 		with open('uploaded_files_to_S3.txt', 'w') as f:
-			f.write(str(uploaded_files_to_S3))
+			f.writelines([file + '\n' for file in uploaded_files_to_S3])
 
 		#######################################################
 
