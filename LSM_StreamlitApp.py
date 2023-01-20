@@ -39,9 +39,6 @@ sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 import boto3
 from botocore.exceptions import ClientError
 
-import urllib3
-urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
-
 from PASSWORDS import *
 from ProgressPercentageCalculator import *
 from SanityChecks import *
