@@ -25,12 +25,8 @@
 def SanityChecks(my_list1, my_list2, my_list3):
 	for i in range(len(my_list1)):
 		is_active = my_list1[i] == 'Yes'
-		aperture = float(my_list2[i])
-		exposure_time = float(my_list3[i])
-		if aperture < 0:
-			raise ValueError("Aperture(s) should be a positive number")
-		if exposure_time < 0:
-			raise ValueError("Exposure Time(s) should be a positive number")
+		aperture = int(my_list2[i])
+		exposure_time = int(my_list3[i])
 		if is_active:
 			if aperture == 0:
 				raise ValueError("Aperture(s) should not be 0 for active channels")

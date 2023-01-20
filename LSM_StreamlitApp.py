@@ -177,14 +177,14 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	with middle_column1:
 
 		for i in range(1, len(ChannelNames) + 1):
-			
-			st.text_input(f'Aperture (%)', value='0', placeholder='0', key = f'-Aperture{i}Key-')
+
+			st.number_input(f'Aperture (%)', key = f'-Aperture{i}Key-', min_value = 0, max_value = 100, value = 0, step = 1, format = '%d')
 
 	with right_column1:
 
 		for i in range(1, len(ChannelNames) + 1):
-			
-			st.text_input(f'Exposure Time (micro s)', value='0', placeholder='0', key = f'-ExposureTime{i}Key-')
+
+			st.number_input(f'Exposure Time (micro s)', key = f'-ExposureTime{i}Key-', min_value = 0, value = 0, step = 1, format = '%d')
 
 	st.markdown("""---""")
 
@@ -216,11 +216,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	with left_column3:
 
-		st.text_input('Resolution in XY Plane (*mandatory, micro m)', value = '0', placeholder = '0', key = '-ResolutionInXYPlaneKey-')
+		st.number_input('Resolution in XY Plane (*mandatory, micro m)', key = '-ResolutionInXYPlaneKey-', min_value = 0.0, value = 0.0, step = 0.1, format = '%0.1f')
 
 	with right_column3:
 
-		st.text_input('Resolution in Z direction (*mandatory, micro m)', value = '0', placeholder = '0', key = '-ResolutionZDirectionKey-')
+		st.number_input('Resolution in Z direction (*mandatory, micro m)', key = '-ResolutionZDirectionKey-', min_value = 0.0, value = 0.0, step = 0.1, format = '%0.1f')
 
 	st.markdown("""---""")
 
@@ -330,30 +330,12 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		All_Aperture_Keys = []
 		for i in range(1, len(ChannelNames) + 1):
 			All_Aperture_Keys.append(st.session_state[f'-Aperture{i}Key-'])
-		try:
-			temp_list = [float(x) for x in All_Aperture_Keys]
-		except:
-			ErrorMessage = st.error('Aperture(s) must be a number', icon = None)
-			time.sleep(SleepTime)
-			ErrorMessage.empty()
-			st.stop()
-
-		del temp_list
 
 		####################
 
 		All_ExposureTime_Keys = []
 		for i in range(1, len(ChannelNames) + 1):
 			All_ExposureTime_Keys.append(st.session_state[f'-ExposureTime{i}Key-'])
-		try:
-			temp_list = [float(x) for x in All_ExposureTime_Keys]
-		except:
-			ErrorMessage = st.error('Exposure Time(s) must be a number', icon = None)
-			time.sleep(SleepTime)
-			ErrorMessage.empty()
-			st.stop()
-
-		del temp_list
 
 		# Run sanity checks from the function SanityChecks:
 
@@ -371,14 +353,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		####################
 
 		ResolutionInXYPlaneKey = st.session_state['-ResolutionInXYPlaneKey-']
-		try:
-			type(float(ResolutionInXYPlaneKey))
-		except:
-			ErrorMessage = st.error('Resolution in XY Plane should be a number', icon = None)
-			time.sleep(SleepTime)
-			ErrorMessage.empty()
-			st.stop()
-
 		if (float(ResolutionInXYPlaneKey) <= 0):
 			ErrorMessage = st.error('Resolution in XY Plane should be more than 0', icon = None)
 			time.sleep(SleepTime)
@@ -388,14 +362,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		####################
 
 		ResolutionZDirectionKey = st.session_state['-ResolutionZDirectionKey-']
-		try:
-			type(float(ResolutionZDirectionKey))
-		except:
-			ErrorMessage = st.error('Resolution in Z direction should be a number', icon = None)
-			time.sleep(SleepTime)
-			ErrorMessage.empty()			
-			st.stop()
-
 		if (float(ResolutionZDirectionKey) <= 0):
 			ErrorMessage = st.error('Resolution in Z direction should be more than 0', icon = None)
 			time.sleep(SleepTime)
@@ -572,6 +538,8 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 				logging.error(e)
 
+				pass # so that as many as possible files are uploaded
+
 			time.sleep(0.1)
 
 			ProgressBar.progress((i+1)/len(tiff_files))
@@ -590,5 +558,5 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Close the program to start a new upload.')
 
 		st.stop()
-
+    
 #######################################################################
