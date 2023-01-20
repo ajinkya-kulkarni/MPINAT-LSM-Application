@@ -35,7 +35,6 @@ sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 # Clear the screen
 
 os.system('cls||clear')
-
 print()
 
 #############################################################################
