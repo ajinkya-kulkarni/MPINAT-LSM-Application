@@ -113,7 +113,14 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Get the information about users and LSM_SCAN from the CaosDB server.
 
-	persons = db.execute_query("FIND RECORD Person")
+	try:
+		persons = db.execute_query("FIND RECORD Person")
+	except:
+		ErrorMessage = st.error('Unable to fetch persons record(s) in the Linkahead DB. Contact the admin(s) for help.', icon = None)
+		time.sleep(SleepTime)
+		ErrorMessage.empty()
+		st.stop()
+	
 	FamilyNames = []
 	GivenNames = []
 	NameIDs = []
@@ -125,7 +132,14 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		ComboNames += ([str(person.get_property("family_name").value) + str(', ') + str(person.get_property("given_name").value)])
 
-	wavelengths = db.execute_query("FIND RECORD Wavelengths")
+	try:
+		wavelengths = db.execute_query("FIND RECORD Wavelengths")
+	except:
+		ErrorMessage = st.error('Unable to fetch wavelengths record(s) in the Linkahead DB. Contact the admin(s) for help.', icon = None)
+		time.sleep(SleepTime)
+		ErrorMessage.empty()
+		st.stop()
+
 	ChannelIDs = []
 	ChannelNames = []
 	for single_wavelength in wavelengths:
