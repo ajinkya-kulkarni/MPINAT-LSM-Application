@@ -92,9 +92,12 @@ try:
 	data = json.loads(response.text)
 	last_commit_time = data['pushed_at']
 except:
-	response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}")
-	data = json.loads(response.text)
-	last_commit_time = data['pushed_at']
+	try:
+		response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}")
+		data = json.loads(response.text)
+		last_commit_time = data['pushed_at']
+	except:
+		raise Exception('Failed to fetch information about the latest GitHub push.')
 
 # parse the timestamp to a datetime object
 last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
