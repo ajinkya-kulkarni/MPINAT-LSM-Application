@@ -119,10 +119,7 @@ def check_and_delete(file_name):
         os.remove(file_path)
         print(f"Deleted old {file_name}")
 
-file_names = ["LSM_StreamlitApp.py", 
-"ProgressPercentageCalculator.py",
-"SanityChecks.py",
-]
+file_names = ["LSM_StreamlitApp.py", "ProgressPercentageCalculator.py", "SanityChecks.py", "MultiPartS3Upload.py"]
 
 for file_name in file_names:
     check_and_delete(file_name)

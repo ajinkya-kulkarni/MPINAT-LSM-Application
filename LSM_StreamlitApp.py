@@ -45,6 +45,7 @@ from botocore.exceptions import ClientError
 from PASSWORDS import *
 from ProgressPercentageCalculator import *
 from SanityChecks import *
+from MultiPartS3Upload import *
 
 #######################################################################
 
@@ -537,6 +538,10 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
+		# Initialize the logger
+		logger = logging.getLogger()
+		logger.setLevel(logging.ERROR)
+
 		ProgressBarText = st.empty()
 		ProgressBar = st.progress(0)
 
@@ -546,23 +551,15 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 			try:
 
-				response = gwdg_client.upload_file(os.path.join(FolderPathKey, tiff_files[i]),
-				bucket_name, amazon_bucket_target_name, Callback = ProgressPercentage(os.path.join(FolderPathKey, tiff_files[i])))
-
-				print()
+				make_multipart_upload(tiff_files[i], bucket_name, amazon_bucket_target_name, FolderPathKey)
 
 				time.sleep(0.1)
-
 				ProgressBar.progress((i+1)/len(tiff_files))
-
 				ProgressBarText.caption("{}% images uploaded ({} images out of {} images)".format(int(100*(i+1)/len(tiff_files)), i+1, len(tiff_files)))
 
-			except ClientError as e:
-				
-				logger.error("Failed to upload %s", tiff_file, exc_info=True)
-				pass # so that as many as possible files are uploaded
-
-		gwdg_client.close()
+			except Exception as e:
+				logger.error("Failed to upload %s", tiff_files[i], exc_info=True)
+				pass
 
 		#######################################################
 
