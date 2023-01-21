@@ -44,7 +44,6 @@ import boto3
 from botocore.exceptions import ClientError
 
 from PASSWORDS import *
-from ProgressPercentageCalculator import *
 from SanityChecks import *
 from MultiPartS3Upload import *
 
