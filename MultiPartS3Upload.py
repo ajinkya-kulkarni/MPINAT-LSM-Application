@@ -43,6 +43,7 @@ from PASSWORDS import *
 s3 = boto3.client('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = AMAZON_S3_ACCESS_KEY, aws_secret_access_key = AMAZON_S3_SECRET_KEY)
 
 def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, FolderPathKey):
+
 	try:
 		# Create a multipart upload
 		response = s3.create_multipart_upload(Bucket=bucket_name, Key=amazon_bucket_target_name)
@@ -53,31 +54,19 @@ def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, Fol
 		# Initialize the part number and the parts list
 		part_number = 1
 		parts = []
-
+		
 		try:
-			# Get the size of the file
-			file_size = os.path.getsize(os.path.join(FolderPathKey, tiff_file))
-			part_size = 5 * 1024 * 1024
+			# Upload the part
+			response = s3.upload_part(Body=open(os.path.join(FolderPathKey, tiff_file), 'rb'), Bucket=bucket_name, Key=amazon_bucket_target_name, PartNumber=part_number, UploadId=upload_id)
 
-			# Iterate through the file and upload each part
-			with open(os.path.join(FolderPathKey, tiff_file), 'rb') as f:
-				for i in range(0, file_size, part_size):
-					# Get the current part
-					part = f.read(part_size)
+			# Append the part to the parts list
+			parts.append({'ETag': response['ETag'], 'PartNumber': part_number})
 
-					# Upload the part
-					response = s3.upload_part(Body=part, Bucket=bucket_name, Key=amazon_bucket_target_name, PartNumber=part_number, UploadId=upload_id)
-
-					# Append the part to the parts list
-					parts.append({'ETag': response['ETag'], 'PartNumber': part_number})
-
-					# Increment the part number
-					part_number += 1
-
-					# Print the upload progress
-					print(f"Uploading {tiff_file}, {int(((i + part_size) / file_size) * 100)}% complete")
+			# Increment the part number
+			part_number += 1
 
 		except ClientError as e:
+
 			logger.error("Failed to upload %s", tiff_file, exc_info=True)
 			pass
 		try:
