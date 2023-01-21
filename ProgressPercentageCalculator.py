@@ -22,6 +22,7 @@
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
+sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 
 import os
 import threading

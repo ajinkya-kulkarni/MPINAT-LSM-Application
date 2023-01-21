@@ -29,6 +29,10 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 
+import sys
+sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
+sys.tracebacklimit = 0 # Print exception without the buit-in python warning
+
 # Initialize the logger
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
@@ -50,7 +54,7 @@ def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, Fol
 		# Initialize the part number and the parts list
 		part_number = 1
 		parts = []
-        
+		
 		try:
 			# Upload the part
 			response = s3.upload_part(Body=open(os.path.join(FolderPathKey, tiff_file), 'rb'), Bucket=bucket_name, Key=amazon_bucket_target_name, PartNumber=part_number, UploadId=upload_id)

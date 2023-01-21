@@ -35,6 +35,7 @@ import threading
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
+sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 
 import urllib3
 urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
@@ -573,5 +574,5 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Close the program to start a new upload.')
 
 		st.stop()
-    
+	
 #######################################################################
