@@ -570,6 +570,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			if os.path.exists(file_path):
 				os.remove(file_path)
 				print(f"Deleted old {file_name}")
+				print()
 
 		file_names = ["uploaded_files_to_S3.txt"]
 
@@ -582,6 +583,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		#######################################################
 
 		print('Successfully uploaded all images and metadata. Close the program to start a new upload.')
+		print()
 
 		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Close the program to start a new upload.')
 
