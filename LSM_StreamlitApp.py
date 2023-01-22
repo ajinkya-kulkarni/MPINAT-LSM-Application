@@ -564,6 +564,18 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 
+		def check_and_delete(file_name):
+			file_path = os.path.join(os.getcwd(), file_name)
+
+			if os.path.exists(file_path):
+				os.remove(file_path)
+				print(f"Deleted old {file_name}")
+
+		file_names = ["uploaded_files_to_S3.txt"]
+
+		for file_name in file_names:
+			check_and_delete(file_name)
+
 		with open('uploaded_files_to_S3.txt', 'w') as f:
 			f.writelines([file + '\n' for file in uploaded_files_to_S3])
 
