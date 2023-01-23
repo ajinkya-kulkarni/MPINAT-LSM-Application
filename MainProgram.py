@@ -184,8 +184,7 @@ os.system("echo 'Starting streamlit now...'")
 
 print()
 
-# run the Streamlit app with the --server.maxUploadSize flag
-# For example, 5000 = 5GB
+# run the Streamlit app
 subprocess.run(['streamlit', 'run', app_path])
 
 #############################################################################
