@@ -54,7 +54,7 @@ SleepTime = 5
 
 # Some initial config info regarding the web app
 
-with open("logo.png", "rb") as f:
+with open("logo.jpg", "rb") as f:
     image_data = f.read()
 
 image_bytes = BytesIO(image_data)
