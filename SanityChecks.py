@@ -23,6 +23,20 @@
 # Function which checks for erroneous input(s) for Aperture(s), Exposure Time(s) and Active Channels and returns the appropriate exception
 
 def SanityChecks(my_list1, my_list2, my_list3):
+	"""
+	This function performs sanity checks on the provided lists.
+
+	Parameters:
+		my_list1 (list): A list of strings representing whether a channel is active or not. The string should be 'Yes' or 'No'.
+		my_list2 (list): A list of integers representing the aperture of the corresponding channel in my_list1.
+		my_list3 (list): A list of integers representing the exposure time of the corresponding channel in my_list1.
+
+	Returns:
+		None
+
+	Raises:
+		ValueError: If aperture or exposure time is not as expected for the corresponding active/non-active channel.
+	"""
 	for i in range(len(my_list1)):
 		is_active = my_list1[i] == 'Yes'
 		aperture = int(my_list2[i])

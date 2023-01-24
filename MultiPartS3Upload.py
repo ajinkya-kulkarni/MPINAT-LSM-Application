@@ -44,6 +44,19 @@ s3 = boto3.client('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id
 
 def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, FolderPathKey):
 
+	"""
+	This function creates a multipart upload in the specified S3 bucket and uploads the specified tiff file to the specified target name in the bucket.
+
+	Parameters:
+		tiff_file (str): The name of the tiff file to be uploaded.
+		bucket_name (str): The name of the S3 bucket where the file will be uploaded.
+		amazon_bucket_target_name (str): The target name for the file in the S3 bucket.
+		FolderPathKey (str): The path to the folder where the tiff file is located.
+		
+	Returns:
+		None
+	"""
+
 	try:
 		# Create a multipart upload
 		response = s3.create_multipart_upload(Bucket=bucket_name, Key=amazon_bucket_target_name)
