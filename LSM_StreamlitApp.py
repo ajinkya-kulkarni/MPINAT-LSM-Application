@@ -44,9 +44,10 @@ urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authenticatio
 import boto3
 from botocore.exceptions import ClientError
 
+#######################################################################
+
 from PASSWORDS import *
-from SanityChecks import *
-from MultiPartS3Upload import *
+from modules import *
 
 #######################################################################
 

@@ -22,7 +22,7 @@
 
 # UX/UI recommendations provided by Radhika Bhagwat (radhika.bhagwat3@gmail.com, Product Designer) and Md Motiur Rahman Sagar <motiur.sagar@mpinat.mpg.de>
 
-###############################################################
+########################################################################################
 
 import os
 import logging
@@ -37,8 +37,11 @@ sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
 
-# Create a boto3 client for S3, import data from the PASSWORDS.py file
 from PASSWORDS import *
+
+########################################################################################
+
+# Create a boto3 client for S3, import data from the PASSWORDS.py file
 
 s3 = boto3.client('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = AMAZON_S3_ACCESS_KEY, aws_secret_access_key = AMAZON_S3_SECRET_KEY)
 
@@ -90,3 +93,40 @@ def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, Fol
 			pass
 	finally:
 		s3.close()
+
+########################################################################################
+
+# Function which checks for erroneous input(s) for Aperture(s), Exposure Time(s) and Active Channels and returns the appropriate exception
+
+def SanityChecks(my_list1, my_list2, my_list3):
+	"""
+	This function performs sanity checks on the provided lists.
+
+	Parameters:
+		my_list1 (list): A list of strings representing whether a channel is active or not. The string should be 'Yes' or 'No'.
+		my_list2 (list): A list of integers representing the aperture of the corresponding channel in my_list1.
+		my_list3 (list): A list of integers representing the exposure time of the corresponding channel in my_list1.
+
+	Returns:
+		None
+
+	Raises:
+		ValueError: If aperture or exposure time is not as expected for the corresponding active/non-active channel.
+	"""
+	for i in range(len(my_list1)):
+		is_active = my_list1[i] == 'Yes'
+		aperture = int(my_list2[i])
+		exposure_time = int(my_list3[i])
+		if is_active:
+			if aperture == 0:
+				raise ValueError("Aperture(s) should not be 0 for active channels")
+			if exposure_time == 0:
+				raise ValueError("Exposure Time(s) should not be 0 for active channels")
+		else:
+			if aperture != 0:
+				raise ValueError("Aperture(s) should be 0 for non-active channels")
+			if exposure_time != 0:
+				raise ValueError("Exposure Time(s) should be 0 for non-active channels")
+
+########################################################################################
+

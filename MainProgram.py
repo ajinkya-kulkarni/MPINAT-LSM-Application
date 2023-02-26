@@ -119,7 +119,7 @@ def check_and_delete(file_name):
 		os.remove(file_path)
 		print(f"Deleted old {file_name}")
 
-file_names = ["LSM_StreamlitApp.py", "SanityChecks.py", "MultiPartS3Upload.py"]
+file_names = ["LSM_StreamlitApp.py", "modules.py"]
 
 for file_name in file_names:
 	check_and_delete(file_name)
@@ -139,7 +139,7 @@ def download_file(url, proxy=UMG_PROXY):
 	:param proxy: (optional) The proxy to use for the download.
 	"""
 	# specify the file name
-	file_name = url.split("/")[-1]
+	file_name = os.path.join(os.path.basename(url))
 	try:
 		# download the file and save it to a local file
 		urllib.request.urlretrieve(url, file_name)
