@@ -30,8 +30,10 @@ import boto3
 from botocore.exceptions import ClientError
 
 import sys
-sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
-sys.tracebacklimit = 0 # Print exception without the buit-in python warning
+# Don't generate the __pycache__ folder locally
+sys.dont_write_bytecode = True 
+# Print exception without the buit-in python warning
+sys.tracebacklimit = 0 
 
 # Initialize the logger
 logger = logging.getLogger()
