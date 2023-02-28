@@ -1,6 +1,5 @@
 .DS_Store
 PASSWORDS.py
-uploaded_files_to_S3.txt
-.ipynb_checkpoints/S3LinkaheadDB_files-checkpoint.ipynb
-S3_files.txt
+*.txt
+.ipynb_checkpoints/*
 *.ipynb
