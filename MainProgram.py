@@ -32,13 +32,6 @@ sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 
 #############################################################################
 
-# Clear the screen
-
-os.system('cls||clear')
-print()
-
-#############################################################################
-
 # Check if the PASSWORDS file exists in the current directory
 
 file_name = "PASSWORDS.py"
@@ -58,16 +51,12 @@ try:
 		packages = f.read().splitlines()
 	subprocess.run(["pip", "install"] + packages)
 
-	os.system('cls||clear')
-
 except Exception as e:
 	print(f"An error occurred: {e}")
 	proxy = UMG_PROXY
 	print(f"Trying to install packages via proxy: {proxy}")
 	try:
 		subprocess.run(["pip", "install", "--proxy", proxy] + packages)
-
-		os.system('cls||clear')
 
 	except Exception as e:
 		raise Exception(f"An error occurred: {e}")
