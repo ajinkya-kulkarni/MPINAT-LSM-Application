@@ -89,7 +89,7 @@ now = datetime.utcnow()
 elapsed = now - last_commit_datetime
 
 if elapsed.total_seconds() < 500:
-    raise Warning("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
+    raise Exception("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
 
 #############################################################################
 
