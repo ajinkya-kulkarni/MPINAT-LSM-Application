@@ -44,6 +44,21 @@ from PASSWORDS import *
 
 #############################################################################
 
+# Delete all files/folder except PASSWORDS.py
+
+current_dir = os.getcwd()  # Get the current directory
+spared_files = ['PASSWORDS.py', 'MainProgram.py']  # List of files to spare from deletion
+
+for root, dirs, files in os.walk(current_dir):
+    for file in files:
+        if file not in spared_files:
+            os.remove(os.path.join(root, file))
+    for dir in dirs:
+        if dir not in spared_files:
+            os.rmdir(os.path.join(root, dir))
+
+#############################################################################
+
 # Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
 
 repo_name = "MPINAT-LSM-Application"
@@ -78,15 +93,9 @@ if elapsed.total_seconds() < 500:
 
 #############################################################################
 
-# Remove existing files if they exist
+# Download files fom GitHub repo
 
-file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
-
-for file_name in file_names:
-	file_path = os.path.join(os.getcwd(), file_name)
-	delete_file_if_exists(file_name, file_path, delete_flag=True)
-
-# And then download them fom GitHub repo
+file_names = ["LICENSE", "logo.jpg", "", "LSM_StreamlitApp.py", "modules.py", "requirements.txt", "README.md", "TestFile1.tiff", "TestFile2.tiff", "TestFile3.tiff"]
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
