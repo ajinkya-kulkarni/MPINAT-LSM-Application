@@ -189,7 +189,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 	# Get the current date and time in the format DD_Month_YYYY_H_M
 	now = datetime.datetime.now()
-	timestamp = now.strftime("%d_%B_%Y_%H_%M")
+	timestamp = now.strftime("%d_%B_%Y_%H%M_hrs")
 
 	# Construct the new filename with the timestamp
 	filename = f"LSM_overview_{timestamp}.csv"

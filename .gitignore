@@ -1,3 +1,4 @@
 .DS_Store
 PASSWORDS.py
 .ipynb_checkpoints/*
+*.csv

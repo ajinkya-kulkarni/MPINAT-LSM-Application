@@ -74,26 +74,23 @@ now = datetime.utcnow()
 elapsed = now - last_commit_datetime
 
 if elapsed.total_seconds() < 500:
-	raise Exception("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
+	remaining_time = timedelta(seconds=500) - elapsed
+	raise Exception(f"Application has been recently updated by the Admin(s). Please wait for {remaining_time.total_seconds()} seconds and try again.")
 
 #############################################################################
 
 # Delete all files/folder except PASSWORDS.py
 
-def delete_file_if_exists(file_name, file_path, delete_flag=False):
+def delete_file(file_name, file_path):
 	"""
-	Delete the specified file if it exists in the current working directory and delete_flag is True.
-
+	Delete the specified file if it exists in the current working directory.
 	:param file_name: The name of the file to delete.
-	:param delete_flag: A boolean flag indicating whether to delete the file (default is False).
-	:raises Exception: If the file does not exist in the current working directory.
 	"""
-	if not os.path.exists(file_path):
-		raise Exception(f"{file_name} does not exist in the current directory")
-
-	if delete_flag:
+	try:
 		os.remove(file_path)
 		print(f"Deleted old {file_name}")
+	except:
+		pass
 
 #########
 
@@ -103,7 +100,7 @@ for file_name in file_names:
 
 	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
 
-	delete_file_if_exists(file_name, file_path, delete_flag=True)
+	delete_file(file_name, file_path)
 
 #############################################################################
 
@@ -124,13 +121,17 @@ def download_file(url, proxy=None):
 
 		# Set up the request with a User-Agent header to avoid 403 errors
 		headers = {"User-Agent": "Mozilla/5.0"}
+		request = urllib.request.Request(url, headers=headers)
+
+		# Create a proxy handler if a proxy is specified
 		if proxy:
-			proxies = {"http": proxy}
-			request = urllib.request.Request(url, headers=headers)
-			response = urllib.request.urlopen(request, proxies=proxies)
+			proxy_handler = urllib.request.ProxyHandler({"http": proxy})
+			opener = urllib.request.build_opener(proxy_handler)
 		else:
-			request = urllib.request.Request(url, headers=headers)
-			response = urllib.request.urlopen(request)
+			opener = urllib.request.build_opener()
+
+		# Open the URL using the opener
+		response = opener.open(request)
 
 		# Read the response and write to a file
 		with open(os.path.basename(url), "wb") as file:
