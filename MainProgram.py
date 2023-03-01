@@ -40,6 +40,12 @@ file_path = os.path.join(os.getcwd(), file_name)
 if not os.path.exists(file_path):
 	raise Exception(f"{file_name} does not exist in the current directory")
 
+file_name = "requirements.txt"
+file_path = os.path.join(os.getcwd(), file_name)
+
+if not os.path.exists(file_path):
+	raise Exception(f"{file_name} does not exist in the current directory")
+
 #############################################################################
 
 from PASSWORDS import *
