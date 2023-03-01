@@ -171,7 +171,6 @@ except Exception as e:
 
 	except Exception as e:
 		raise Exception(f"An error occurred: {e}")
-		raise Exception("Failed to install packages. Please check your proxy settings and try again.")
 
 #############################################################################
 
