@@ -296,7 +296,6 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 		# Print success message
 		print("LSM_overview.csv created successfully")
-		print()
 
 	except:
 		# If an error occurs, raise an exception

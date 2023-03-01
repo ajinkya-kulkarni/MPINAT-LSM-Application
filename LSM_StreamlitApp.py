@@ -588,7 +588,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		#######################################################
 
 		print('Successfully uploaded all images and metadata. Close the program to start a new upload.')
-		print()
 
 		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Close the program to start a new upload.')
 
