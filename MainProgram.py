@@ -50,12 +50,12 @@ current_dir = os.getcwd()  # Get the current directory
 spared_files = ['PASSWORDS.py', 'MainProgram.py']  # List of files to spare from deletion
 
 for root, dirs, files in os.walk(current_dir):
-    for file in files:
-        if file not in spared_files:
-            os.remove(os.path.join(root, file))
-    for dir in dirs:
-        if dir not in spared_files:
-            os.rmdir(os.path.join(root, dir))
+	for file in files:
+		if file not in spared_files:
+			os.remove(os.path.join(root, file))
+	for dir in dirs:
+		if dir not in spared_files:
+			os.rmdir(os.path.join(root, dir))
 
 #############################################################################
 
@@ -65,21 +65,21 @@ repo_name = "MPINAT-LSM-Application"
 repo_owner = "ajinkya-kulkarni"
 
 try:
-    # send an HTTP GET request to the GitHub API to retrieve information about the latest push
-    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
-    request = urllib.request.Request(url)
-    request.add_header('User-Agent', 'Mozilla/5.0')
-    response = urllib.request.urlopen(request)
-    data = json.loads(response.read())
-    last_commit_time = data['pushed_at']
+	# send an HTTP GET request to the GitHub API to retrieve information about the latest push
+	url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+	request = urllib.request.Request(url)
+	request.add_header('User-Agent', 'Mozilla/5.0')
+	response = urllib.request.urlopen(request)
+	data = json.loads(response.read())
+	last_commit_time = data['pushed_at']
 except:
-    try:
-        # try again without a proxy
-        response = urllib.request.urlopen(url)
-        data = json.loads(response.read())
-        last_commit_time = data['pushed_at']
-    except:
-        raise Exception('Failed to fetch information about the latest GitHub push.')
+	try:
+		# try again without a proxy
+		response = urllib.request.urlopen(url)
+		data = json.loads(response.read())
+		last_commit_time = data['pushed_at']
+	except:
+		raise Exception('Failed to fetch information about the latest GitHub push.')
 
 # parse the timestamp to a datetime object
 last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
@@ -89,7 +89,7 @@ now = datetime.utcnow()
 elapsed = now - last_commit_datetime
 
 if elapsed.total_seconds() < 500:
-    raise Exception("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
+	raise Exception("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
 
 #############################################################################
 
