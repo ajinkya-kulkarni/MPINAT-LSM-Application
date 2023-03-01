@@ -40,9 +40,9 @@ file_path = os.path.join(os.getcwd(), file_name)
 if not os.path.exists(file_path):
 	raise Exception(f"{file_name} does not exist in the current directory")
 
-from PASSWORDS import *
-
 #############################################################################
+
+from PASSWORDS import *
 
 # Check for package versions and update them if necessary
 
