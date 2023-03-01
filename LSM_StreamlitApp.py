@@ -25,7 +25,6 @@
 ###############################################################
 
 import streamlit as st
-import caosdb as db
 
 from datetime import date
 import time
@@ -40,6 +39,7 @@ sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 
 import urllib3
 urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
+import caosdb as db
 
 import boto3
 from botocore.exceptions import ClientError
