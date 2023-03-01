@@ -32,6 +32,7 @@ import numpy as np
 
 import datetime
 import glob
+import datetime
 import csv
 
 import caosdb as db
