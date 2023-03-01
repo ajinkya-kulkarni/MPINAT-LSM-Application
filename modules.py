@@ -221,9 +221,13 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 			# Extract LSM scan information
 			Date = np.array(single_entry.get_property_values('date'))[0]
 			DeltaPixelXY = np.array(single_entry.get_property_values('delta_pixel_xy'))[0]
+			DeltaPixelXY = np.round(DeltaPixelXY, 2)
+
 			DeltaPixelZ = np.array(single_entry.get_property_values('delta_pixel_z'))[0]
+			DeltaPixelZ = np.round(DeltaPixelZ, 2)
+
 			NumberOfChannels = np.array(single_entry.get_property_values('number_of_channels'))[0]
-			
+
 			#######################################################################################
 
 			# Extract filter/wavelengths information
@@ -246,12 +250,16 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 			# Extract aperture information
 			Apertures = np.array(single_entry.get_property_values('apertures')).flatten()
+			Apertures = np.int_(Apertures)
+
 			Apertures = ', '.join([str(x) for x in Apertures])
 			
 			#######################################################################################
 
 			# Extract exposure time information
 			ExposureTimes = np.array(single_entry.get_property_values('exposure_times')).flatten()
+			ExposureTimes = np.int_(ExposureTimes)
+
 			ExposureTimes = ', '.join([str(x) for x in ExposureTimes])
 			
 			#######################################################################################
@@ -290,7 +298,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 				writer.writerow(results_array)
 
 		#######################################################################################
-		
+
 	except:
 		# If an error occurs, raise an exception
 		raise Exception('Something went wrong')

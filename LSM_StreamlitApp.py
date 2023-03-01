@@ -519,6 +519,13 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 			ErrorMessage.empty()			
 			st.stop()
 
+		#######################################################
+
+		# Make the LSM_overview.csv file
+		make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY)
+
+		#######################################################
+
 		ProgressBarText = st.empty()
 		ProgressBar = st.progress(0)
 
@@ -584,11 +591,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		with open('uploaded_files_to_S3.txt', 'w') as f:
 			f.writelines([file + '\n' for file in uploaded_files_to_S3])
-
-		#######################################################
-
-		# Make the LSM_overview.csv file
-		make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY)
 
 		#######################################################
 
