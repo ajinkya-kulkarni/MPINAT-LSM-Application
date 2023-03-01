@@ -74,8 +74,11 @@ now = datetime.utcnow()
 elapsed = now - last_commit_datetime
 
 if elapsed.total_seconds() < 500:
-	remaining_time = int((timedelta(seconds=500) - elapsed).total_seconds() / 60)
-	raise Exception(f"Application has been recently updated by the Admin(s). Please wait for {remaining_time} more minutes and try again.")
+	if elapsed.total_seconds() < 60:
+		raise Exception("Application has been recently updated by the Admin(s). Please wait for 1 more minute and try again.")
+	else:
+		remaining_time = int((timedelta(seconds=500) - elapsed).total_seconds() / 60)
+		raise Exception(f"Application has been recently updated by the Admin(s). Please wait for {remaining_time} more minutes and try again.")
 
 #############################################################################
 
@@ -172,13 +175,6 @@ except Exception as e:
 
 	except Exception as e:
 		raise Exception(f"An error occurred: {e}")
-
-#############################################################################
-
-from modules import *
-
-# Make the LSM_overview.csv file
-make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY)
 
 #############################################################################
 

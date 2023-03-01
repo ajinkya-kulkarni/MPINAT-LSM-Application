@@ -290,10 +290,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 				writer.writerow(results_array)
 
 		#######################################################################################
-
-		# Print success message
-		print(filename + " created successfully")
-
+		
 	except:
 		# If an error occurs, raise an exception
 		raise Exception('Something went wrong')

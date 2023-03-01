@@ -587,6 +587,11 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
+		# Make the LSM_overview.csv file
+		make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY)
+
+		#######################################################
+
 		print('Successfully uploaded all images and metadata. Close the program to start a new upload.')
 
 		SuccessMessageImagesUpload = st.success('Successfully uploaded all images. Close the program to start a new upload.')
