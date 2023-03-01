@@ -299,3 +299,54 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 	except:
 		# If an error occurs, raise an exception
 		raise Exception('Something went wrong')
+	
+#######################################################################################
+
+def check_file_if_exists_delete_if_delete_flag_is_True(file_name, file_path, delete_flag=False):
+    """
+    Delete the specified file if it exists in the current working directory and delete_flag is True.
+
+    :param file_name: The name of the file to delete.
+    :param delete_flag: A boolean flag indicating whether to delete the file (default is False).
+    :raises Exception: If the file does not exist in the current working directory.
+    """
+    if not os.path.exists(file_path):
+        raise Exception(f"{file_name} does not exist in the current directory")
+
+    if delete_flag:
+        os.remove(file_path)
+        print(f"Deleted old {file_name}")
+
+#######################################################################################
+
+def download_file(url, proxy=UMG_PROXY):
+	"""
+	Download a file from the specified URL.
+	:param url: The URL of the file to download.
+	:param proxy: (optional) The proxy to use for the download.
+	"""
+	# specify the file name
+	file_name = os.path.join(os.path.basename(url))
+	try:
+		# download the file and save it to a local file
+		urllib.request.urlretrieve(url, file_name)
+		print(f"Latest {file_name} fetched successfully")
+	except urllib.error.HTTPError as e:
+		print(f"HTTP Error: {e.code} {e.reason}")
+		if proxy:
+			try:
+				# specify the proxy
+				proxy_support = urllib.request.ProxyHandler({'http': proxy})
+				opener = urllib.request.build_opener(proxy_support)
+				urllib.request.install_opener(opener)
+				# download the file and save it to a local file
+				urllib.request.urlretrieve(url, file_name)
+				print(f"Latest {file_name} fetched successfully")
+			except:
+				urllib.request.install_opener(None)
+				print("Failed to fetch the file with proxy")
+		else:
+			print("Failed to fetch the file without proxy")
+
+#######################################################################################
+

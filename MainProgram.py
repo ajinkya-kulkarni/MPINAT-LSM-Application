@@ -24,7 +24,7 @@ import os
 import urllib.request
 import subprocess
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
@@ -37,18 +37,63 @@ sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 file_name = "PASSWORDS.py"
 file_path = os.path.join(os.getcwd(), file_name)
 
-if not os.path.exists(file_path):
-	raise Exception(f"{file_name} does not exist in the current directory")
+check_file_if_exists_delete_if_delete_flag_is_True(file_name, file_path, delete_flag=False)
 
-file_name = "requirements.txt"
-file_path = os.path.join(os.getcwd(), file_name)
-
-if not os.path.exists(file_path):
-	raise Exception(f"{file_name} does not exist in the current directory")
+from PASSWORDS import *
 
 #############################################################################
 
-from PASSWORDS import *
+# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
+
+repo_name = "MPINAT-LSM-Application"
+repo_owner = "ajinkya-kulkarni"
+
+try:
+    # send an HTTP GET request to the GitHub API to retrieve information about the latest push
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+    request = urllib.request.Request(url)
+    request.add_header('User-Agent', 'Mozilla/5.0')
+    response = urllib.request.urlopen(request)
+    data = json.loads(response.read())
+    last_commit_time = data['pushed_at']
+except:
+    try:
+        # try again without a proxy
+        response = urllib.request.urlopen(url)
+        data = json.loads(response.read())
+        last_commit_time = data['pushed_at']
+    except:
+        raise Exception('Failed to fetch information about the latest GitHub push.')
+
+# parse the timestamp to a datetime object
+last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
+# get the current time
+now = datetime.utcnow()
+# calculate the time elapsed
+elapsed = now - last_commit_datetime
+
+if elapsed.total_seconds() < 500:
+    raise Warning("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
+
+#############################################################################
+
+# Remove existing files if they exist
+
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
+
+for file_name in file_names:
+	file_path = os.path.join(os.getcwd(), file_name)
+	check_file_if_exists_delete_if_delete_flag_is_True(file_name, file_path, delete_flag=True)
+
+# And then download them fom GitHub repo
+
+base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
+
+for file_name in file_names:
+	url = f"{base_url}{file_name}"
+	download_file(url, UMG_PROXY)
+
+#############################################################################
 
 # Check for package versions and update them if necessary
 
@@ -70,102 +115,10 @@ except Exception as e:
 
 #############################################################################
 
-print()
-
-#############################################################################
-
-# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
-
-import requests
-
-repo_name = "MPINAT-LSM-Application"
-repo_owner = "ajinkya-kulkarni"
-
-try:
-	response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}", proxies=UMG_PROXY)
-	data = json.loads(response.text)
-	last_commit_time = data['pushed_at']
-except:
-	try:
-		response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}")
-		data = json.loads(response.text)
-		last_commit_time = data['pushed_at']
-	except:
-		raise Exception('Failed to fetch information about the latest GitHub push.')
-
-# parse the timestamp to a datetime object
-last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
-# get the current time
-now = datetime.utcnow()
-# calculate the time elapsed
-elapsed = now - last_commit_datetime
-
-if (elapsed.seconds < 500):
-	raise Warning("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
-
-#############################################################################
-
-# Remove existing files if they exist
-
-def check_and_delete(file_name):
-	file_path = os.path.join(os.getcwd(), file_name)
-
-	if os.path.exists(file_path):
-		os.remove(file_path)
-		print(f"Deleted old {file_name}")
-
-file_names = ["LSM_StreamlitApp.py", "modules.py"]
-
-for file_name in file_names:
-	check_and_delete(file_name)
-
-# And then download them fom GitHub repo
-
-def download_file(url, proxy=UMG_PROXY):
-	"""
-	Download a file from the specified URL.
-	:param url: The URL of the file to download.
-	:param proxy: (optional) The proxy to use for the download.
-	"""
-	# specify the file name
-	file_name = os.path.join(os.path.basename(url))
-	try:
-		# download the file and save it to a local file
-		urllib.request.urlretrieve(url, file_name)
-		print(f"Latest {file_name} fetched successfully")
-	except urllib.error.HTTPError as e:
-		print(f"HTTP Error: {e.code} {e.reason}")
-		if proxy:
-			try:
-				# specify the proxy
-				proxy_support = urllib.request.ProxyHandler({'http': proxy})
-				opener = urllib.request.build_opener(proxy_support)
-				urllib.request.install_opener(opener)
-				# download the file and save it to a local file
-				urllib.request.urlretrieve(url, file_name)
-				print(f"Latest {file_name} fetched successfully")
-			except:
-				urllib.request.install_opener(None)
-				print("Failed to fetch the file with proxy")
-		else:
-			print("Failed to fetch the file without proxy")
-
-base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
-
-for file_name in file_names:
-	url = f"{base_url}{file_name}"
-	download_file(url, UMG_PROXY)
-
-#############################################################################
-
 from modules import *
 
 # Make the LSM_overview.csv file
 make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY)
-
-#############################################################################
-
-print()
 
 #############################################################################
 
@@ -177,8 +130,6 @@ streamlit_file_name = "LSM_StreamlitApp.py"
 app_path = os.path.join(os.getcwd(), streamlit_file_name)
 
 os.system("echo 'Starting streamlit now...'")
-
-print()
 
 # run the Streamlit app
 subprocess.run(['streamlit', 'run', app_path])
