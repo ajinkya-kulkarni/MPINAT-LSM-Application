@@ -304,7 +304,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 	
 #######################################################################################
 
-def check_file_if_exists_delete_if_delete_flag_is_True(file_name, file_path, delete_flag=False):
+def delete_file_if_exists(file_name, file_path, delete_flag=False):
 	"""
 	Delete the specified file if it exists in the current working directory and delete_flag is True.
 

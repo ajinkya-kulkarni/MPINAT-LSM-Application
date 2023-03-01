@@ -37,7 +37,8 @@ sys.tracebacklimit = 0 # Print exception without the buit-in python warning
 file_name = "PASSWORDS.py"
 file_path = os.path.join(os.getcwd(), file_name)
 
-check_file_if_exists_delete_if_delete_flag_is_True(file_name, file_path, delete_flag=False)
+if not os.path.exists(file_path):
+	raise Exception(f"{file_name} does not exist in the current directory")
 
 from PASSWORDS import *
 
@@ -83,7 +84,7 @@ file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
 
 for file_name in file_names:
 	file_path = os.path.join(os.getcwd(), file_name)
-	check_file_if_exists_delete_if_delete_flag_is_True(file_name, file_path, delete_flag=True)
+	delete_file_if_exists(file_name, file_path, delete_flag=True)
 
 # And then download them fom GitHub repo
 
