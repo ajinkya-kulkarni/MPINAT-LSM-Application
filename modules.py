@@ -269,9 +269,6 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 									DeltaPixelXY, DeltaPixelZ, NumberOfChannels, wavelengths_only,
 									IlluminationLeft, IlluminationRight, Apertures, ExposureTimes, 
 									Objective, Zoom, SheetWidth, AdditionalComments], dtype = object)
-
-			# Replace empty strings with 'None' if any field is left empty originally
-			results_array = ['None' if x == '' else x for x in results_array]
 			
 			#######################################################################################
 
