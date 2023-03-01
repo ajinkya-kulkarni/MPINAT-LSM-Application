@@ -146,8 +146,6 @@ def download_file(url, proxy=None):
 
 #########
 
-file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
-
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
 for file_name in file_names:

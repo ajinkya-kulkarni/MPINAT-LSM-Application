@@ -187,7 +187,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 	for file_path in glob.glob(file_path_pattern):
 		os.remove(file_path)
 
-	# Get the current date and time in the format DD_Month_YYYY_H_M
+	# Get the current date and time in the format DD_Month_YYYY_HM_hrs
 	now = datetime.datetime.now()
 	timestamp = now.strftime("%d_%B_%Y_%H%M_hrs")
 
