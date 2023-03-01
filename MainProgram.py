@@ -79,7 +79,7 @@ if elapsed.total_seconds() < 500:
 
 #############################################################################
 
-# Delete all files/folder except PASSWORDS.py
+# Delete file(s)
 
 def delete_file(file_name, file_path):
 	"""
@@ -91,18 +91,6 @@ def delete_file(file_name, file_path):
 		print(f"Deleted old {file_name}")
 	except:
 		pass
-
-#########
-
-file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
-
-for file_name in file_names:
-
-	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
-
-	delete_file(file_name, file_path)
-
-#############################################################################
 
 # Download files fom GitHub repo
 
@@ -144,7 +132,21 @@ def download_file(url, proxy=None):
 	except Exception as e:
 		raise ValueError(f"Failed to download file from {url}") from e
 
-#########
+#############################################################################
+
+# Delete existing files
+
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
+
+for file_name in file_names:
+
+	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
+
+	delete_file(file_name, file_path)
+
+#############################################################################
+
+# Download files fom GitHub repo
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
