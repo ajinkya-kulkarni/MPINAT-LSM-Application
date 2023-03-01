@@ -25,7 +25,6 @@
 ########################################################################################
 
 import os
-import urllib.request
 
 import boto3
 from botocore.exceptions import ClientError
@@ -302,57 +301,3 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 		raise Exception('Something went wrong')
 	
 #######################################################################################
-
-def delete_file_if_exists(file_name, file_path, delete_flag=False):
-	"""
-	Delete the specified file if it exists in the current working directory and delete_flag is True.
-
-	:param file_name: The name of the file to delete.
-	:param delete_flag: A boolean flag indicating whether to delete the file (default is False).
-	:raises Exception: If the file does not exist in the current working directory.
-	"""
-	if not os.path.exists(file_path):
-		raise Exception(f"{file_name} does not exist in the current directory")
-
-	if delete_flag:
-		os.remove(file_path)
-		print(f"Deleted old {file_name}")
-
-#######################################################################################
-
-def download_file(url, proxy=None):
-	"""
-	Download a file from the specified URL.
-
-	:param url: The URL of the file to download.
-	:param proxy: (optional) The proxy to use for the download.
-	:raises ValueError: If the URL is invalid or the download fails.
-	"""
-	try:
-		# Validate the URL
-		if not url.startswith("http"):
-			raise ValueError("Invalid URL: " + url)
-
-		# Set up the request with a User-Agent header to avoid 403 errors
-		headers = {"User-Agent": "Mozilla/5.0"}
-		if proxy:
-			proxies = {"http": proxy}
-			request = urllib.request.Request(url, headers=headers)
-			response = urllib.request.urlopen(request, proxies=proxies)
-		else:
-			request = urllib.request.Request(url, headers=headers)
-			response = urllib.request.urlopen(request)
-
-		# Read the response and write to a file
-		with open(os.path.basename(url), "wb") as file:
-			file.write(response.read())
-
-		print(f"Downloaded {os.path.basename(url)} successfully")
-
-	except (urllib.error.URLError, ValueError) as e:
-		raise ValueError(f"Failed to download file from {url}: {e}") from e
-	except Exception as e:
-		raise ValueError(f"Failed to download file from {url}") from e
-
-#######################################################################################
-

@@ -46,16 +46,30 @@ from PASSWORDS import *
 
 # Delete all files/folder except PASSWORDS.py
 
-current_dir = os.getcwd()  # Get the current directory
-spared_files = ['PASSWORDS.py', 'MainProgram.py']  # List of files to spare from deletion
+def delete_file_if_exists(file_name, file_path, delete_flag=False):
+	"""
+	Delete the specified file if it exists in the current working directory and delete_flag is True.
 
-for root, dirs, files in os.walk(current_dir):
-	for file in files:
-		if file not in spared_files:
-			os.remove(os.path.join(root, file))
-	for dir in dirs:
-		if dir not in spared_files:
-			os.rmdir(os.path.join(root, dir))
+	:param file_name: The name of the file to delete.
+	:param delete_flag: A boolean flag indicating whether to delete the file (default is False).
+	:raises Exception: If the file does not exist in the current working directory.
+	"""
+	if not os.path.exists(file_path):
+		raise Exception(f"{file_name} does not exist in the current directory")
+
+	if delete_flag:
+		os.remove(file_path)
+		print(f"Deleted old {file_name}")
+
+#########
+
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
+
+for file_name in file_names:
+
+	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
+
+	delete_file_if_exists(file_name, file_path, delete_flag=True)
 
 #############################################################################
 
@@ -95,7 +109,43 @@ if elapsed.total_seconds() < 500:
 
 # Download files fom GitHub repo
 
-file_names = ["LICENSE", "logo.jpg", "", "LSM_StreamlitApp.py", "modules.py", "requirements.txt", "README.md", "TestFile1.tiff", "TestFile2.tiff", "TestFile3.tiff"]
+def download_file(url, proxy=None):
+	"""
+	Download a file from the specified URL.
+
+	:param url: The URL of the file to download.
+	:param proxy: (optional) The proxy to use for the download.
+	:raises ValueError: If the URL is invalid or the download fails.
+	"""
+	try:
+		# Validate the URL
+		if not url.startswith("http"):
+			raise ValueError("Invalid URL: " + url)
+
+		# Set up the request with a User-Agent header to avoid 403 errors
+		headers = {"User-Agent": "Mozilla/5.0"}
+		if proxy:
+			proxies = {"http": proxy}
+			request = urllib.request.Request(url, headers=headers)
+			response = urllib.request.urlopen(request, proxies=proxies)
+		else:
+			request = urllib.request.Request(url, headers=headers)
+			response = urllib.request.urlopen(request)
+
+		# Read the response and write to a file
+		with open(os.path.basename(url), "wb") as file:
+			file.write(response.read())
+
+		print(f"Downloaded {os.path.basename(url)} successfully")
+
+	except (urllib.error.URLError, ValueError) as e:
+		raise ValueError(f"Failed to download file from {url}: {e}") from e
+	except Exception as e:
+		raise ValueError(f"Failed to download file from {url}") from e
+
+#########
+
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
