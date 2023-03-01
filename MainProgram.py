@@ -44,35 +44,6 @@ from PASSWORDS import *
 
 #############################################################################
 
-# Delete all files/folder except PASSWORDS.py
-
-def delete_file_if_exists(file_name, file_path, delete_flag=False):
-	"""
-	Delete the specified file if it exists in the current working directory and delete_flag is True.
-
-	:param file_name: The name of the file to delete.
-	:param delete_flag: A boolean flag indicating whether to delete the file (default is False).
-	:raises Exception: If the file does not exist in the current working directory.
-	"""
-	if not os.path.exists(file_path):
-		raise Exception(f"{file_name} does not exist in the current directory")
-
-	if delete_flag:
-		os.remove(file_path)
-		print(f"Deleted old {file_name}")
-
-#########
-
-file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
-
-for file_name in file_names:
-
-	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
-
-	delete_file_if_exists(file_name, file_path, delete_flag=True)
-
-#############################################################################
-
 # Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
 
 repo_name = "MPINAT-LSM-Application"
@@ -104,6 +75,35 @@ elapsed = now - last_commit_datetime
 
 if elapsed.total_seconds() < 500:
 	raise Exception("Application has been recently updated by the Admin(s). Please wait for 10 minutes and try again.")
+
+#############################################################################
+
+# Delete all files/folder except PASSWORDS.py
+
+def delete_file_if_exists(file_name, file_path, delete_flag=False):
+	"""
+	Delete the specified file if it exists in the current working directory and delete_flag is True.
+
+	:param file_name: The name of the file to delete.
+	:param delete_flag: A boolean flag indicating whether to delete the file (default is False).
+	:raises Exception: If the file does not exist in the current working directory.
+	"""
+	if not os.path.exists(file_path):
+		raise Exception(f"{file_name} does not exist in the current directory")
+
+	if delete_flag:
+		os.remove(file_path)
+		print(f"Deleted old {file_name}")
+
+#########
+
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
+
+for file_name in file_names:
+
+	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
+
+	delete_file_if_exists(file_name, file_path, delete_flag=True)
 
 #############################################################################
 
