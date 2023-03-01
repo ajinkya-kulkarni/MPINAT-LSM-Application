@@ -31,6 +31,8 @@ from botocore.exceptions import ClientError
 import numpy as np
 import caosdb as db
 
+import datetime
+import glob
 import csv
 
 import urllib3
@@ -177,13 +179,20 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 	# Find all LSM scan entries in the database
 	LSM_entries = db.execute_query('FIND RECORD LSM_SCAN')
 
-	# Define file path for output CSV file
-	file_path = "LSM_overview.csv"
+	# Define file path pattern for output CSV files
+	file_path_pattern = "LSM_overview_*.csv"
 
-	# If the output CSV file already exists, delete it
-	if os.path.exists(file_path):
+	# Remove all output CSV files that match the pattern
+	for file_path in glob.glob(file_path_pattern):
 		os.remove(file_path)
 
+	# Get the current date and time in the format DD_Month_YYYY_H_M
+	now = datetime.datetime.now()
+	timestamp = now.strftime("%d_%B_%Y_%H_%M")
+
+	# Construct the new filename with the timestamp
+	filename = f"LSM_overview_{timestamp}.csv"
+	
 	try:
 		# Loop over each LSM scan entry and extract relevant data
 		for single_entry in LSM_entries:
@@ -265,7 +274,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 			#######################################################################################
 
 			# Write array to CSV file
-			with open('LSM_overview.csv', mode='a', newline='') as file:
+			with open(filename, mode='a', newline='') as file:
 
 				# Create CSV writer
 				writer = csv.writer(file)
