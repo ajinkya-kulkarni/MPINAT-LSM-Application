@@ -113,12 +113,6 @@ file_names = ["LSM_StreamlitApp.py", "modules.py"]
 for file_name in file_names:
 	check_and_delete(file_name)
 
-#############################################################################
-
-print()
-
-#############################################################################
-
 # And then download them fom GitHub repo
 
 def download_file(url, proxy=UMG_PROXY):
@@ -155,6 +149,13 @@ base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Applic
 for file_name in file_names:
 	url = f"{base_url}{file_name}"
 	download_file(url, UMG_PROXY)
+
+#############################################################################
+
+from modules import *
+
+# Make the LSM_overview.csv file
+make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY)
 
 #############################################################################
 

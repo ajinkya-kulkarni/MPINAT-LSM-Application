@@ -4,3 +4,4 @@ streamlit==1.17.0
 boto3==1.26.50
 botocore==1.29.50
 caosdb==0.10.0
+numpy==1.23.5

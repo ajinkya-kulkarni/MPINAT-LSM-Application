@@ -28,6 +28,13 @@ import os
 import logging
 import boto3
 from botocore.exceptions import ClientError
+import numpy as np
+import caosdb as db
+
+import csv
+
+import urllib3
+urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
 
 import sys
 # Don't generate the __pycache__ folder locally
@@ -38,6 +45,8 @@ sys.tracebacklimit = 0
 # Initialize the logger
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
+
+########################################################################################
 
 from PASSWORDS import *
 
@@ -132,3 +141,152 @@ def SanityChecks(my_list1, my_list2, my_list3):
 
 ########################################################################################
 
+def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG_PROXY):
+	# Attempt to connect to the Linkahead database without using a proxy server
+	try:
+		db.configure_connection(
+			url = LINKAHEAD_URL,
+			password_method = "plain",
+			ssl_insecure = True, # remove after naming server
+			username = LINKAHEAD_USERNAME,
+			password = LINKAHEAD_PASSWORD,
+			timeout = 1000
+		)
+
+	# If connection fails, try again using a proxy server
+	except:
+		try:
+			db.configure_connection(
+				url = LINKAHEAD_URL,
+				password_method = "plain",
+				ssl_insecure = True, # remove after naming server
+				username = LINKAHEAD_USERNAME,
+				password = LINKAHEAD_PASSWORD,
+				https_proxy = UMG_PROXY,
+				timeout = 1000
+			)
+
+		# If connection still fails, raise an exception
+		except:
+			raise Exception('Unsuccessful connection with the Linkahead DB. Contact the admin(s) for help.')
+			
+	#######################################################################################
+
+	### Extract all relevant entries from the Linkahead DB
+
+	# Find all LSM scan entries in the database
+	LSM_entries = db.execute_query('FIND RECORD LSM_SCAN')
+
+	# Define file path for output CSV file
+	file_path = "LSM_overview.csv"
+
+	# If the output CSV file already exists, delete it
+	if os.path.exists(file_path):
+		os.remove(file_path)
+
+	try:
+		# Loop over each LSM scan entry and extract relevant data
+		for single_entry in LSM_entries:
+			
+			#######################################################################################
+
+			# Extract sample information
+			SampleID = np.array(single_entry.get_property_values('Sample'))[0]
+			SampleName = np.array(db.execute_query(f"FIND SAMPLE WITH id = '{SampleID}'", 
+												unique=True).get_property_values('name'))[0]
+			
+			#######################################################################################
+
+			# Extract operator information
+			OperatorID = np.array(single_entry.get_property_values('operator'))[0]
+			GivenName = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
+												unique=True).get_property_values('given_name'))[0]
+			FamilyName = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
+												unique=True).get_property_values('family_name'))[0]
+			EmailAddress = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
+													unique=True).get_property_values('email_address'))[0]
+			#######################################################################################
+
+			# Extract LSM scan information
+			Date = np.array(single_entry.get_property_values('date'))[0]
+			DeltaPixelXY = np.array(single_entry.get_property_values('delta_pixel_xy'))[0]
+			DeltaPixelZ = np.array(single_entry.get_property_values('delta_pixel_z'))[0]
+			NumberOfChannels = np.array(single_entry.get_property_values('number_of_channels'))[0]
+			
+			#######################################################################################
+
+			# Extract filter/wavelengths information
+			n = len(np.array(single_entry.get_property_values('filters')).flatten())
+			filter_names = {}
+			for i, single_filter in enumerate(np.array(single_entry.get_property_values('filters')).flatten(), 1):
+				name = np.array(db.execute_query(f"FIND Wavelengths WITH id = '{single_filter}'", 
+												unique=True).get_property_values('name'))[0]
+				filter_names[f"filter_{i}"] = name
+			wavelengths_only = np.array(list(filter_names.values()))
+			wavelengths_only = ', '.join([str(x) for x in wavelengths_only])
+			
+			#######################################################################################
+
+			# Extract illumination information
+			IlluminationLeft = np.array(single_entry.get_property_values('illumination_left'))[0]
+			IlluminationRight = np.array(single_entry.get_property_values('illumination_right'))[0]
+			
+			#######################################################################################
+
+			# Extract aperture information
+			Apertures = np.array(single_entry.get_property_values('apertures')).flatten()
+			Apertures = ', '.join([str(x) for x in Apertures])
+			
+			#######################################################################################
+
+			# Extract exposure time information
+			ExposureTimes = np.array(single_entry.get_property_values('exposure_times')).flatten()
+			ExposureTimes = ', '.join([str(x) for x in ExposureTimes])
+			
+			#######################################################################################
+
+			# Extract objective, zoom, sheet width and additional comments information
+			Objective = np.array(single_entry.get_property_values('objective'))[0]
+			Zoom = np.array(single_entry.get_property_values('zoom'))[0]
+			SheetWidth = np.array(single_entry.get_property_values('sheet_width'))[0]
+			AdditionalComments = np.array(single_entry.get_property_values('additional_comments'))[0]
+			
+			#######################################################################################
+
+			# Combine all extracted information into an array
+			results_array = np.array([SampleName, GivenName, FamilyName, EmailAddress, Date, 
+									DeltaPixelXY, DeltaPixelZ, NumberOfChannels, wavelengths_only,
+									IlluminationLeft, IlluminationRight, Apertures, ExposureTimes, 
+									Objective, Zoom, SheetWidth, AdditionalComments], dtype = object)
+
+			# Replace empty strings with 'None' if any field is left empty originally
+			results_array = ['None' if x == '' else x for x in results_array]
+			
+			#######################################################################################
+
+			# Write array to CSV file
+			with open('LSM_overview.csv', mode='a', newline='') as file:
+
+				# Create CSV writer
+				writer = csv.writer(file)
+
+				# If the file is empty, write the header row
+				if file.tell() == 0:
+					writer.writerow(['Sample ID/Barcode', 'Operator given name', 'Operator family name', 
+									'Operator email address', 'Upload date', 'Delta pixel XY', 'Delta pixel Z', 
+									'Number of Channels', 'Wavelengths', 'Illumination Left', 'Illumination Right', 
+									'Apertures', 'Exposure times', 'Objective', 'Zoom', 
+									'Sheet width', 'Additional comments'])
+
+				# Write the current data row to the CSV file
+				writer.writerow(results_array)
+
+		#######################################################################################
+
+		# Print success message
+		print("LSM_overview.csv created successfully")
+		print()
+
+	except:
+		# If an error occurs, raise an exception
+		raise Exception('Something went wrong')
