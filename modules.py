@@ -203,9 +203,10 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 			# Extract sample information
 			SampleID = np.array(single_entry.get_property_values('Sample'))[0]
-			SampleName = np.array(db.execute_query(f"FIND SAMPLE WITH id = '{SampleID}'", 
-												unique=True).get_property_values('name'))[0]
-			
+			SampleName = np.array(db.execute_query(f"FIND SAMPLE WITH id = '{SampleID}'", unique=True).get_property_values('name'))[0]
+
+			SampleName = str(SampleName)
+
 			#######################################################################################
 
 			# Extract operator information
@@ -216,10 +217,17 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 												unique=True).get_property_values('family_name'))[0]
 			EmailAddress = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
 													unique=True).get_property_values('email_address'))[0]
+			
+			GivenName = str(GivenName)
+			FamilyName = str(FamilyName)
+			EmailAddress = str(EmailAddress)
+			
 			#######################################################################################
 
 			# Extract LSM scan information
 			Date = np.array(single_entry.get_property_values('date'))[0]
+			Date = str(Date)
+			
 			DeltaPixelXY = np.array(single_entry.get_property_values('delta_pixel_xy'))[0]
 			DeltaPixelXY = np.round(DeltaPixelXY, 2)
 
@@ -266,9 +274,15 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 			# Extract objective, zoom, sheet width and additional comments information
 			Objective = np.array(single_entry.get_property_values('objective'))[0]
+			Objective = str(Objective)
+			
 			Zoom = np.array(single_entry.get_property_values('zoom'))[0]
+			Zoom = str(Zoom)
+			
 			SheetWidth = np.array(single_entry.get_property_values('sheet_width'))[0]
+			
 			AdditionalComments = np.array(single_entry.get_property_values('additional_comments'))[0]
+			AdditionalComments = str(AdditionalComments)
 			
 			#######################################################################################
 
@@ -288,11 +302,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 				# If the file is empty, write the header row
 				if file.tell() == 0:
-					writer.writerow(['Sample ID/Barcode', 'Operator given name', 'Operator family name', 
-									'Operator email address', 'Upload date', 'Delta pixel XY', 'Delta pixel Z', 
-									'Number of Channels', 'Wavelengths', 'Illumination Left', 'Illumination Right', 
-									'Apertures', 'Exposure times', 'Objective', 'Zoom', 
-									'Sheet width', 'Additional comments'])
+					writer.writerow(['Sample ID/Barcode', 'Operator given name', 'Operator family name', 'Operator email address', 'Upload date', 'Delta pixel XY', 'Delta pixel Z', 'Number of Channels', 'Wavelengths', 'Illumination Left', 'Illumination Right', 'Apertures', 'Exposure times', 'Objective', 'Zoom', 'Sheet width', 'Additional comments'])
 
 				# Write the current data row to the CSV file
 				writer.writerow(results_array)
