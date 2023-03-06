@@ -97,14 +97,14 @@ def delete_file(file_name, file_path):
 
 # Download files fom GitHub repo
 
-def download_file(url, proxy=None):
+def download_file(url):
 	"""
 	Download a file from the specified URL.
 
 	:param url: The URL of the file to download.
-	:param proxy: (optional) The proxy to use for the download.
 	:raises ValueError: If the URL is invalid or the download fails.
 	"""
+
 	try:
 		# Validate the URL
 		if not url.startswith("http"):
@@ -114,15 +114,16 @@ def download_file(url, proxy=None):
 		headers = {"User-Agent": "Mozilla/5.0"}
 		request = urllib.request.Request(url, headers=headers)
 
-		# Create a proxy handler if a proxy is specified
-		if proxy:
-			proxy_handler = urllib.request.ProxyHandler({"http": proxy})
-			opener = urllib.request.build_opener(proxy_handler)
-		else:
+		# Try to download the file without using a proxy
+		try:
 			opener = urllib.request.build_opener()
-
-		# Open the URL using the opener
-		response = opener.open(request)
+			response = opener.open(request)
+		except urllib.error.URLError:
+			# If the download fails, try again using the default proxy
+			print('Trying to downlod file(s) with proxy now')
+			proxy_handler = urllib.request.ProxyHandler({"http": UMG_PROXY})
+			opener = urllib.request.build_opener(proxy_handler)
+			response = opener.open(request)
 
 		# Read the response and write to a file
 		with open(os.path.basename(url), "wb") as file:
@@ -167,7 +168,6 @@ try:
 	subprocess.run(["pip", "install"] + packages)
 
 except Exception as e:
-	print(f"An error occurred: {e}")
 	proxy = UMG_PROXY
 	print(f"Trying to install packages via proxy: {proxy}")
 	try:
