@@ -97,7 +97,7 @@ def delete_file(file_name, file_path):
 
 # Download files fom GitHub repo
 
-def download_file(url):
+def download_file(url, proxy=None):
 	"""
 	Download a file from the specified URL.
 
@@ -121,7 +121,8 @@ def download_file(url):
 		except urllib.error.URLError:
 			# If the download fails, try again using the default proxy
 			print('Trying to downlod file(s) with proxy now')
-			proxy_handler = urllib.request.ProxyHandler({"http": UMG_PROXY})
+			which_proxy = proxy
+			proxy_handler = urllib.request.ProxyHandler({"http": which_proxy})
 			opener = urllib.request.build_opener(proxy_handler)
 			response = opener.open(request)
 
