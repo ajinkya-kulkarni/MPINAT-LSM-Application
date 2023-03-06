@@ -28,11 +28,10 @@ import os
 
 import boto3
 from botocore.exceptions import ClientError
-import numpy as np
 
+import numpy as np
 import datetime
 import glob
-import datetime
 import csv
 
 import caosdb as db
@@ -211,12 +210,12 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 			# Extract operator information
 			OperatorID = np.array(single_entry.get_property_values('operator'))[0]
-			GivenName = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
-												unique=True).get_property_values('given_name'))[0]
-			FamilyName = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
-												unique=True).get_property_values('family_name'))[0]
-			EmailAddress = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", 
-													unique=True).get_property_values('email_address'))[0]
+
+			GivenName = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", unique=True).get_property_values('given_name'))[0]
+
+			FamilyName = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", unique=True).get_property_values('family_name'))[0]
+
+			EmailAddress = np.array(db.execute_query(f"FIND PERSON WITH id = '{OperatorID}'", unique=True).get_property_values('email_address'))[0]
 			
 			GivenName = str(GivenName)
 			FamilyName = str(FamilyName)
@@ -240,11 +239,12 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 			# Extract filter/wavelengths information
 			n = len(np.array(single_entry.get_property_values('filters')).flatten())
+
 			filter_names = {}
 			for i, single_filter in enumerate(np.array(single_entry.get_property_values('filters')).flatten(), 1):
-				name = np.array(db.execute_query(f"FIND Wavelengths WITH id = '{single_filter}'", 
-												unique=True).get_property_values('name'))[0]
+				name = np.array(db.execute_query(f"FIND Wavelengths WITH id = '{single_filter}'",  unique=True).get_property_values('name'))[0]
 				filter_names[f"filter_{i}"] = name
+
 			wavelengths_only = np.array(list(filter_names.values()))
 			wavelengths_only = ', '.join([str(x) for x in wavelengths_only])
 			
@@ -287,10 +287,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 			#######################################################################################
 
 			# Combine all extracted information into an array
-			results_array = np.array([SampleName, GivenName, FamilyName, EmailAddress, Date, 
-									DeltaPixelXY, DeltaPixelZ, NumberOfChannels, wavelengths_only,
-									IlluminationLeft, IlluminationRight, Apertures, ExposureTimes, 
-									Objective, Zoom, SheetWidth, AdditionalComments], dtype = object)
+			results_array = np.array([SampleName, GivenName, FamilyName, EmailAddress, Date, DeltaPixelXY, DeltaPixelZ, NumberOfChannels, wavelengths_only,IlluminationLeft, IlluminationRight, Apertures, ExposureTimes, Objective, Zoom, SheetWidth, AdditionalComments], dtype = object)
 			
 			#######################################################################################
 
