@@ -304,7 +304,7 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 				# If the file is empty, write the header row
 				if file.tell() == 0:
-					writer.writerow(['Sample ID/Barcode', 'Operator given name', 'Operator family name', 'Operator email address', 'Upload date', 'Delta pixel XY', 'Delta pixel Z', 'Number of Channels', 'Wavelengths', 'Illumination Left', 'Illumination Right', 'Apertures', 'Exposure times', 'Objective', 'Zoom', 'Sheet width', 'Additional comments'])
+					writer.writerow(['Scan Type', 'Sample ID/Barcode', 'Operator given name', 'Operator family name', 'Operator email address', 'Upload date', 'Delta pixel XY', 'Delta pixel Z', 'Number of Channels', 'Wavelengths', 'Illumination Left', 'Illumination Right', 'Apertures', 'Exposure times', 'Objective', 'Zoom', 'Sheet width', 'Additional comments'])
 
 				# Write the current data row to the CSV file
 				writer.writerow(results_array)
