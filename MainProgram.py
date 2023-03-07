@@ -99,9 +99,11 @@ def download_file(url, proxy=None):
 
 #############################################################################
 
-# Delete existing files
+# Delete existing files and download files fom GitHub repo
 
 print()
+
+base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
 file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
 
@@ -111,15 +113,6 @@ for file_name in file_names:
 
 	delete_file(file_name, file_path)
 
-print()
-
-#############################################################################
-
-# Download files fom GitHub repo
-
-base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
-
-for file_name in file_names:
 	url = f"{base_url}{file_name}"
 	download_file(url, UMG_PROXY)
 
