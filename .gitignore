@@ -3,4 +3,3 @@ PASSWORDS.py
 .ipynb_checkpoints/*
 *.csv
 *.txt
-*.json
