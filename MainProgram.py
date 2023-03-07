@@ -23,8 +23,6 @@
 import os
 import urllib.request
 import subprocess
-import json
-from datetime import datetime, timedelta
 
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
@@ -46,39 +44,7 @@ from PASSWORDS import *
 
 # Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
 
-repo_name = "MPINAT-LSM-Application"
-repo_owner = "ajinkya-kulkarni"
-
-try:
-	# send an HTTP GET request to the GitHub API to retrieve information about the latest push
-	url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
-	request = urllib.request.Request(url)
-	request.add_header('User-Agent', 'Mozilla/5.0')
-	response = urllib.request.urlopen(request)
-	data = json.loads(response.read())
-	last_commit_time = data['pushed_at']
-except:
-	try:
-		# try again without a proxy
-		response = urllib.request.urlopen(url)
-		data = json.loads(response.read())
-		last_commit_time = data['pushed_at']
-	except:
-		raise Exception('Failed to fetch information about the latest GitHub push.')
-
-# parse the timestamp to a datetime object
-last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
-# get the current time
-now = datetime.utcnow()
-# calculate the time elapsed
-elapsed = now - last_commit_datetime
-
-if elapsed.total_seconds() < 500:
-
-	# remaining_time = int((timedelta(seconds=500) - elapsed).total_seconds() / 60)
-	# raise Exception(f"Application has been recently updated by the Admin(s). Please wait for {remaining_time} more minutes and try again.")
-
-	raise Exception(f"Application has been recently updated by the Admin(s). Please wait for 10 more minutes and try again.")
+check_last_commit(mode = 'Test')
 
 #############################################################################
 
