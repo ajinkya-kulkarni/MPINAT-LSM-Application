@@ -124,7 +124,7 @@ from modules import *
 
 # Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
 
-check_last_commit(mode = 'Test')
+check_last_commit()
 
 print()
 
