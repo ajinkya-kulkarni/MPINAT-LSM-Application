@@ -41,6 +41,9 @@ import caosdb as db
 import urllib3
 urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
 
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
 import sys
 # Don't generate the __pycache__ folder locally
 sys.dont_write_bytecode = True 
@@ -183,19 +186,16 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 	# Find all LSM scan entries in the database
 	LSM_entries = db.execute_query('FIND RECORD LSM_SCAN')
 
-	# Define file path pattern for output CSV files
-	file_path_pattern = "LSM_overview_*.csv"
+	# Define output CSV file path
+	filename = "LSM_overview.csv"
 
-	# Remove all output CSV files that match the pattern
-	for file_path in glob.glob(file_path_pattern):
-		os.remove(file_path)
-
+	# Remove existing output CSV file, if it exists
+	if os.path.exists(filename):
+		os.remove(filename)
+	
 	# Get the current date and time in the format DD_Month_YYYY_HM_hrs
 	now = datetime.now()
-	timestamp = now.strftime("%d_%B_%Y_%H%M_hrs")
-
-	# Construct the new filename with the timestamp
-	filename = f"LSM_overview_{timestamp}.csv"
+	timestamp = now.strftime("%d_%B_%Y_%H:%M_hrs")
 	
 	try:
 		# Loop over each LSM scan entry and extract relevant data
@@ -304,6 +304,11 @@ def make_LSM_overview(LINKAHEAD_URL, LINKAHEAD_USERNAME, LINKAHEAD_PASSWORD, UMG
 
 				# If the file is empty, write the header row
 				if file.tell() == 0:
+
+					writer.writerow(['Created on ' + str(timestamp)])
+
+					writer.writerow([''])
+
 					writer.writerow(['Scan Type', 'Sample ID/Barcode', 'Operator given name', 'Operator family name', 'Operator email address', 'Upload date', 'Delta pixel XY', 'Delta pixel Z', 'Number of Channels', 'Wavelengths', 'Illumination Left', 'Illumination Right', 'Apertures', 'Exposure times', 'Objective', 'Zoom', 'Sheet width', 'Additional comments'])
 
 				# Write the current data row to the CSV file
@@ -356,3 +361,47 @@ def check_last_commit(mode=None):
 
 #######################################################################################
 
+def export_csv_to_google_sheets(spreadsheet_name = 'ABA_Project_Overview', csv_file_name = 'LSM_overview.csv'):
+    """
+    Exports the contents of a CSV file to a Google Sheets spreadsheet.
+
+    Args:
+        spreadsheet_name (str): The name of the Google Sheets spreadsheet to export the data to.
+        csv_file_name (str): The name of the CSV file to export. Assumes the file is in the current working directory.
+        
+    Raises:
+        ValueError: If the specified spreadsheet cannot be found.
+        FileNotFoundError: If the specified CSV file or credentials file cannot be found.
+
+    """
+    # Define the API scope and load the credentials
+    scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+    try:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name('GoogleSheetsSecrets.json', scope)
+    except FileNotFoundError:
+        raise FileNotFoundError("Could not find credentials file 'GoogleSheetsSecrets.json' in the current working directory")
+
+    # Authorize access to the Google Sheets API and open the specified spreadsheet
+    try:
+        client = gspread.authorize(credentials)
+        spreadsheet = client.open(spreadsheet_name)
+    except gspread.exceptions.SpreadsheetNotFound:
+        raise ValueError(f"Spreadsheet '{spreadsheet_name}' not found")
+
+    # Import the CSV file into the specified worksheet
+    try:
+        csv_file_path = os.path.join(os.getcwd(), csv_file_name)
+        with open(csv_file_path, 'r') as file:
+            content = file.read()
+            spreadsheet.values_update(
+                'A1',  # Update the first cell
+                params={'valueInputOption': 'RAW'},
+                body={'values': [row.split(',') for row in content.split('\n')]}
+            )
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Could not find file '{csv_file_name}' in the current working directory")
+
+    print(f"CSV file '{csv_file_name}' exported to Google Sheets spreadsheet '{spreadsheet_name}'")
+
+
+#######################################################################################
