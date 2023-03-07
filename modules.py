@@ -379,7 +379,7 @@ def export_csv_to_google_sheets(spreadsheet_name = 'ABA_Project_Overview', csv_f
 	try:
 		credentials = ServiceAccountCredentials.from_json_keyfile_name('GoogleSheetsSecrets.json', scope)
 	except FileNotFoundError:
-		raise FileNotFoundError("Could not find credentials file 'GoogleSheetsSecrets.json' in the current working directory")
+		raise FileNotFoundError("Could not find Google API credentials file 'GoogleSheetsSecrets.json' in the current working directory")
 
 	# Authorize access to the Google Sheets API and open the specified spreadsheet
 	try:
