@@ -31,7 +31,7 @@ from botocore.exceptions import ClientError
 
 import urllib.request
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import numpy as np
 import glob
