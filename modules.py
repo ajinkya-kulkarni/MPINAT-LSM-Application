@@ -348,7 +348,7 @@ def check_last_commit(mode=None):
 
 	if mode == 'Test':
 		# If the mode is set to 'test', print the elapsed time instead of raising an exception.
-		print(f"Last commit was made {elapsed.total_seconds()} seconds ago.")
+		print(f"Last commit was made {int(elapsed.total_seconds())} seconds ago.")
 	elif elapsed.total_seconds() < 500:
 		# If the elapsed time is less than 500 seconds, raise an exception with a message indicating that
 		# the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.

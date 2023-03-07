@@ -42,12 +42,6 @@ from PASSWORDS import *
 
 #############################################################################
 
-# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
-
-check_last_commit(mode = 'Test')
-
-#############################################################################
-
 # Delete file(s)
 
 def delete_file(file_name, file_path):
@@ -107,6 +101,8 @@ def download_file(url, proxy=None):
 
 # Delete existing files
 
+print()
+
 file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
 
 for file_name in file_names:
@@ -114,6 +110,8 @@ for file_name in file_names:
 	file_path = os.path.join(os.getcwd(), file_name) # Get the current directory
 
 	delete_file(file_name, file_path)
+
+print()
 
 #############################################################################
 
@@ -124,6 +122,18 @@ base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Applic
 for file_name in file_names:
 	url = f"{base_url}{file_name}"
 	download_file(url, UMG_PROXY)
+
+print()
+
+#############################################################################
+
+from modules import *
+
+# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
+
+check_last_commit(mode = 'Test')
+
+print()
 
 #############################################################################
 
@@ -146,6 +156,8 @@ except Exception as e:
 #############################################################################
 
 # Run the Streamlit App
+
+print()
 
 streamlit_file_name = "LSM_StreamlitApp.py"
 
