@@ -30,7 +30,6 @@ from datetime import date
 import time
 import os
 import logging
-import threading
 from io import BytesIO
 
 import sys
