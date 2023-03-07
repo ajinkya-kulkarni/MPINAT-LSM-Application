@@ -5,5 +5,3 @@ botocore==1.29.50
 caosdb==0.11.0
 numpy==1.23.5
 caosadvancedtools==0.6.1
-gspread==5.7.2
-oauth2client==4.1.3
