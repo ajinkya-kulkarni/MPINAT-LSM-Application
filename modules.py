@@ -29,11 +29,6 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
-import urllib.request
-import json
-import csv
-from datetime import datetime
-
 import caosdb as db
 import urllib3
 urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
