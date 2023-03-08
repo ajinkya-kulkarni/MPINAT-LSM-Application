@@ -32,6 +32,8 @@ import os
 import logging
 from io import BytesIO
 
+import json
+
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 sys.tracebacklimit = 0 # Print exception without the buit-in python warning
@@ -572,11 +574,17 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 
-		def check_and_delete(file_name):
-			file_path = os.path.join(os.getcwd(), file_name)
+		file_name = Uploaded_files_to_S3.txt
+		file_path = os.path.join(os.getcwd(), file_name)
+		if os.path.exists(file_path):
+			os.remove(file_path)
 
-			if os.path.exists(file_path):
-				os.remove(file_path)
+		# Convert the list to a JSON string
+		uploaded_files_to_S3_json = json.dumps(uploaded_files_to_S3)
+
+		# Write the JSON string to a file
+		with open('Uploaded_files_to_S3.txt', 'w') as f:
+			f.write(uploaded_files_to_S3_json)
 
 		#######################################################
 
