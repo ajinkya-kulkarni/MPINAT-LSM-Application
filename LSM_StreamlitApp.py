@@ -26,7 +26,7 @@
 
 import streamlit as st
 
-from datetime import date
+from datetime import datetime
 import time
 import os
 import logging
@@ -166,7 +166,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	# Date selection widget
 
-	st.date_input("Date when the LSM image(s) were scanned", date.today(), key = '-DateKey-')
+	st.date_input("Date when the LSM image(s) were scanned", datetime.today().date(), key = '-DateKey-')
 
 	st.text_input('Write the path of the folder containing the images', value = "", key = '-FolderPathKey-')
 
@@ -572,19 +572,19 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
-		uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
+		Uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
 
-		file_name = Uploaded_files_to_S3.txt
+		file_name = 'Uploaded_files_to_S3.txt'
 		file_path = os.path.join(os.getcwd(), file_name)
 		if os.path.exists(file_path):
 			os.remove(file_path)
 
-		# Convert the list to a JSON string
-		uploaded_files_to_S3_json = json.dumps(uploaded_files_to_S3)
+		timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs')
 
-		# Write the JSON string to a file
 		with open('Uploaded_files_to_S3.txt', 'w') as f:
-			f.write(uploaded_files_to_S3_json)
+			f.write(f"Created on {timestamp}\n")
+			f.write("\n")
+			f.writelines([file + '\n' for file in Uploaded_files_to_S3])
 
 		#######################################################
 
