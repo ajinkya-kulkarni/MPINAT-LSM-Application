@@ -29,10 +29,6 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
-from datetime import datetime
-import urllib.request
-import json
-
 import caosdb as db
 import urllib3
 urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
@@ -137,110 +133,5 @@ def SanityChecks(my_list1, my_list2, my_list3):
 				raise ValueError("Aperture(s) should be 0 for non-active channels")
 			if exposure_time != 0:
 				raise ValueError("Exposure Time(s) should be 0 for non-active channels")
-
-#######################################################################################
-
-def check_last_commit(mode=None):
-	"""
-	Checks the last commit time of the MPINAT-LSM-Application GitHub repository owned by ajinkya-kulkarni.
-
-	Args:
-		mode (str, optional): If set to 'Test', the function will print the elapsed time instead of raising an exception. Defaults to None.
-
-	Raises:
-		Exception: If the elapsed time since the last commit is less than 500 seconds, and mode is not set to 'Test', an exception will be raised with a message indicating that the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.
-	"""
-
-	repo_name = "MPINAT-LSM-Application"
-	repo_owner = "ajinkya-kulkarni"
-
-	try:
-		# send an HTTP GET request to the GitHub API to retrieve information about the latest push
-		url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
-		request = urllib.request.Request(url)
-		request.add_header('User-Agent', 'Mozilla/5.0')
-		response = urllib.request.urlopen(request)
-		data = json.loads(response.read())
-		last_commit_time = data['pushed_at']
-	except:
-		try:
-			# try again without a proxy
-			response = urllib.request.urlopen(url)
-			data = json.loads(response.read())
-			last_commit_time = data['pushed_at']
-		except:
-			raise Exception('Failed to fetch information about the latest GitHub push.')
-
-	# parse the timestamp to a datetime object
-	last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
-	# get the current time
-	now = datetime.utcnow()
-	# calculate the time elapsed
-	elapsed = now - last_commit_datetime
-
-	if mode == 'Test':
-		# If the mode is set to 'test', print the elapsed time instead of raising an exception.
-		print(f"Last commit was made {int(elapsed.total_seconds())} seconds ago.")
-	elif elapsed.total_seconds() < 500:
-		# If the elapsed time is less than 500 seconds, raise an exception with a message indicating that
-		# the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.
-		raise Exception(f"Application has been recently updated by the Admin(s). Please wait for 10 more minutes and try again.")
-
-#######################################################################################
-
-def log_file_generator():
-
-	# Create an S3 resource object using endpoint URL and access keys
-	s3 = boto3.resource('s3',endpoint_url=AMAZON_S3_ENDPOINT_URL, aws_access_key_id=AMAZON_S3_ACCESS_KEY, aws_secret_access_key=AMAZON_S3_SECRET_KEY)
-
-	########################################################################
-
-	# Create a Bucket object representing the specified Amazon S3 bucket
-	bucket = s3.Bucket(AMAZON_S3_BUCKET)
-
-	# Get list of objects in the bucket
-	objects = list(bucket.objects.all())
-
-	# Get total number of files in the bucket
-	total_files = len(objects)
-
-	########################################################################
-
-	filename = 'S3_files.txt'
-
-	if os.path.exists(filename):
-		os.remove(filename)
-
-	########################################################################
-
-	with open('S3_files.txt', 'w') as file:
-		# Write the first line with timestamp
-		timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs')
-		file.write('Log generated on ' + timestamp + '\n')
-		file.write('\n')
-		
-		# Loop over each object in the bucket and write its name and upload date to the text file
-		for i in range(total_files):
-			
-			obj = objects[i]
-			
-			# Write object name and upload date to text file
-			file.write(obj.key + ' ' + obj.last_modified.strftime('(Created on : ' + '%d %B %Y at %H:%M hrs)') + '\n')
-
-	########################################################################
-
-	# Loop over all objects in the bucket that contain the word 'TestSample_0' in their key name
-
-	for i in range(total_files):
-		obj = objects[i]
-
-		if ('TestSample_0' in obj.key):
-			try:
-				print(str(obj.key))
-				# Delete the object
-				obj.delete()
-			except:
-				# If an error occurs, raise an exception
-				raise Exception('Something went wrong')
 
 #######################################################################################

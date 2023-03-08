@@ -24,6 +24,10 @@ import os
 import urllib.request
 import subprocess
 
+from datetime import datetime
+import urllib.request
+import json
+
 import sys
 sys.dont_write_bytecode = True # Don't generate the __pycache__ folder locally
 sys.tracebacklimit = 0 # Print exception without the buit-in python warning
@@ -42,6 +46,56 @@ from PASSWORDS import *
 
 #############################################################################
 
+# Checks the timestamp of the last made commit
+
+def check_last_commit(mode=None):
+	"""
+	Checks the last commit time of the MPINAT-LSM-Application GitHub repository owned by ajinkya-kulkarni.
+
+	Args:
+		mode (str, optional): If set to 'Test', the function will print the elapsed time instead of raising an exception. Defaults to None.
+
+	Raises:
+		Exception: If the elapsed time since the last commit is less than 500 seconds, and mode is not set to 'Test', an exception will be raised with a message indicating that the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.
+	"""
+
+	repo_name = "MPINAT-LSM-Application"
+	repo_owner = "ajinkya-kulkarni"
+
+	try:
+		# send an HTTP GET request to the GitHub API to retrieve information about the latest push
+		url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+		request = urllib.request.Request(url)
+		request.add_header('User-Agent', 'Mozilla/5.0')
+		response = urllib.request.urlopen(request)
+		data = json.loads(response.read())
+		last_commit_time = data['pushed_at']
+	except:
+		try:
+			# try again without a proxy
+			response = urllib.request.urlopen(url)
+			data = json.loads(response.read())
+			last_commit_time = data['pushed_at']
+		except:
+			raise Exception('Failed to fetch information about the latest GitHub push.')
+
+	# parse the timestamp to a datetime object
+	last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
+	# get the current time
+	now = datetime.utcnow()
+	# calculate the time elapsed
+	elapsed = now - last_commit_datetime
+
+	if mode == 'Test':
+		# If the mode is set to 'test', print the elapsed time instead of raising an exception.
+		print(f"Last commit was made {int(elapsed.total_seconds())} seconds ago.")
+	elif elapsed.total_seconds() < 500:
+		# If the elapsed time is less than 500 seconds, raise an exception with a message indicating that
+		# the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.
+		raise Exception(f"Application has been recently updated by the Admin(s). Please wait for 10 more minutes and try again.")
+
+#############################################################################
+
 # Delete file(s)
 
 def delete_file(file_name, file_path):
@@ -54,6 +108,8 @@ def delete_file(file_name, file_path):
 		print(f"Deleted old {file_name}")
 	except:
 		pass
+
+#############################################################################
 
 # Download files fom GitHub repo
 
@@ -99,13 +155,19 @@ def download_file(url, proxy=None):
 
 #############################################################################
 
-# Delete existing files and download files fom GitHub repo
+# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
+
+check_last_commit()
 
 print()
 
+#############################################################################
+
+# Delete existing files and download files fom GitHub repo
+
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
-file_names = ["LSM_StreamlitApp.py", "modules.py", "log_file_generator.py", "requirements.txt"]
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
 
 for file_name in file_names:
 
@@ -117,16 +179,6 @@ for file_name in file_names:
 	download_file(url, UMG_PROXY)
 
 	print()
-
-#############################################################################
-
-from modules import *
-
-# Check if the last commit is made 500 seconds back (GitHub raw content does not refresh for atleast 300 seconds)
-
-check_last_commit()
-
-print()
 
 #############################################################################
 
