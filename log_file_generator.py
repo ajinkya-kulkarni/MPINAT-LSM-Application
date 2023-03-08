@@ -115,15 +115,12 @@ def make_log_file():
 
 		if ('TestSample_0' in obj.key):
 			try:
-				print(str(obj.key))
-				
+				print(str(obj.key) + ' found')
 				# Delete the object
 				obj.delete()
-
 				# Print message indicating that the object was deleted successfully
 				print(str(obj.key) + ' deleted')
 				print()
-
 			except:
 				# If an error occurs, raise an exception
 				raise Exception('Something went wrong')
@@ -132,6 +129,8 @@ def make_log_file():
 
 if __name__ == '__main__':
 
-    make_log_file()
+	os.system('clear || cls')
+
+	make_log_file()
 
 ########################################################################################
