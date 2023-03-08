@@ -293,7 +293,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	# Submit the form
 
 	submitted = st.form_submit_button('Submit', help = 'This will submit and clear the form')
-	
+
+	st.markdown("")
+
 	###############################################################
 
 	if submitted:
