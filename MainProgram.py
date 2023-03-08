@@ -116,7 +116,7 @@ for file_name in file_names:
 	url = f"{base_url}{file_name}"
 	download_file(url, UMG_PROXY)
 
-print()
+	print()
 
 #############################################################################
 
@@ -142,7 +142,6 @@ except Exception as e:
 	print(f"Trying to install packages via proxy: {proxy}")
 	try:
 		subprocess.run(["pip", "install", "--proxy", proxy] + packages)
-
 	except Exception as e:
 		raise Exception(f"An error occurred: {e}")
 
