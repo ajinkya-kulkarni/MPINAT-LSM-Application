@@ -358,7 +358,7 @@ def make_LSM_Overview_file():
 
 		global_entries.append(single_entry_data)
 
-		##############################################
+	##############################################
 
 	# create the JSON file
 	with open('LSM_Overview.json', 'w') as outfile:
@@ -392,3 +392,6 @@ def make_LSM_Overview_file():
 			writer.writerow(entry.values())
 
 	print('LSM_Overview.csv file successfully created!')
+
+#######################################################################################
+
