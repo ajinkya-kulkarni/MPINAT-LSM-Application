@@ -4,3 +4,4 @@ PASSWORDS.py
 *.csv
 *.txt
 *.json
+S3_files.txt
