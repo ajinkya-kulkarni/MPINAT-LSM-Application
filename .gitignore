@@ -1,5 +1,3 @@
 .DS_Store
 PASSWORDS.py
-*.csv
 *.txt
-*.json
