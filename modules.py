@@ -29,6 +29,10 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 
+from datetime import datetime
+import urllib.request
+import json
+
 import caosdb as db
 import urllib3
 urllib3.disable_warnings() # Disable the HTTPS warnings for CaosDB authentication
@@ -105,3 +109,81 @@ def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, Fol
 
 ########################################################################################
 
+# Function which checks for erroneous input(s) for Aperture(s), Exposure Time(s) and Active Channels and returns the appropriate exception
+
+def SanityChecks(my_list1, my_list2, my_list3):
+	"""
+	This function performs sanity checks on the provided lists.
+	Parameters:
+		my_list1 (list): A list of strings representing whether a channel is active or not. The string should be 'Yes' or 'No'.
+		my_list2 (list): A list of integers representing the aperture of the corresponding channel in my_list1.
+		my_list3 (list): A list of integers representing the exposure time of the corresponding channel in my_list1.
+	Returns:
+		None
+	Raises:
+		ValueError: If aperture or exposure time is not as expected for the corresponding active/non-active channel.
+	"""
+	for i in range(len(my_list1)):
+		is_active = my_list1[i] == 'Yes'
+		aperture = int(my_list2[i])
+		exposure_time = int(my_list3[i])
+		if is_active:
+			if aperture == 0:
+				raise ValueError("Aperture(s) should not be 0 for active channels")
+			if exposure_time == 0:
+				raise ValueError("Exposure Time(s) should not be 0 for active channels")
+		else:
+			if aperture != 0:
+				raise ValueError("Aperture(s) should be 0 for non-active channels")
+			if exposure_time != 0:
+				raise ValueError("Exposure Time(s) should be 0 for non-active channels")
+
+#######################################################################################
+
+def check_last_commit(mode=None):
+	"""
+	Checks the last commit time of the MPINAT-LSM-Application GitHub repository owned by ajinkya-kulkarni.
+
+	Args:
+		mode (str, optional): If set to 'Test', the function will print the elapsed time instead of raising an exception. Defaults to None.
+
+	Raises:
+		Exception: If the elapsed time since the last commit is less than 500 seconds, and mode is not set to 'Test', an exception will be raised with a message indicating that the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.
+	"""
+
+	repo_name = "MPINAT-LSM-Application"
+	repo_owner = "ajinkya-kulkarni"
+
+	try:
+		# send an HTTP GET request to the GitHub API to retrieve information about the latest push
+		url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+		request = urllib.request.Request(url)
+		request.add_header('User-Agent', 'Mozilla/5.0')
+		response = urllib.request.urlopen(request)
+		data = json.loads(response.read())
+		last_commit_time = data['pushed_at']
+	except:
+		try:
+			# try again without a proxy
+			response = urllib.request.urlopen(url)
+			data = json.loads(response.read())
+			last_commit_time = data['pushed_at']
+		except:
+			raise Exception('Failed to fetch information about the latest GitHub push.')
+
+	# parse the timestamp to a datetime object
+	last_commit_datetime = datetime.strptime(last_commit_time, "%Y-%m-%dT%H:%M:%SZ")
+	# get the current time
+	now = datetime.utcnow()
+	# calculate the time elapsed
+	elapsed = now - last_commit_datetime
+
+	if mode == 'Test':
+		# If the mode is set to 'test', print the elapsed time instead of raising an exception.
+		print(f"Last commit was made {int(elapsed.total_seconds())} seconds ago.")
+	elif elapsed.total_seconds() < 500:
+		# If the elapsed time is less than 500 seconds, raise an exception with a message indicating that
+		# the application has been recently updated by the admin(s) and the user should wait for 10 more minutes before trying again.
+		raise Exception(f"Application has been recently updated by the Admin(s). Please wait for 10 more minutes and try again.")
+
+#######################################################################################
