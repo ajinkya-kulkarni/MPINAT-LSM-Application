@@ -187,3 +187,60 @@ def check_last_commit(mode=None):
 		raise Exception(f"Application has been recently updated by the Admin(s). Please wait for 10 more minutes and try again.")
 
 #######################################################################################
+
+def log_file_generator():
+
+	# Create an S3 resource object using endpoint URL and access keys
+	s3 = boto3.resource('s3',endpoint_url=AMAZON_S3_ENDPOINT_URL, aws_access_key_id=AMAZON_S3_ACCESS_KEY, aws_secret_access_key=AMAZON_S3_SECRET_KEY)
+
+	########################################################################
+
+	# Create a Bucket object representing the specified Amazon S3 bucket
+	bucket = s3.Bucket(AMAZON_S3_BUCKET)
+
+	# Get list of objects in the bucket
+	objects = list(bucket.objects.all())
+
+	# Get total number of files in the bucket
+	total_files = len(objects)
+
+	########################################################################
+
+	filename = 'S3_files.txt'
+
+	if os.path.exists(filename):
+		os.remove(filename)
+
+	########################################################################
+
+	with open('S3_files.txt', 'w') as file:
+		# Write the first line with timestamp
+		timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs')
+		file.write('Log generated on ' + timestamp + '\n')
+		file.write('\n')
+		
+		# Loop over each object in the bucket and write its name and upload date to the text file
+		for i in range(total_files):
+			
+			obj = objects[i]
+			
+			# Write object name and upload date to text file
+			file.write(obj.key + ' ' + obj.last_modified.strftime('(Created on : ' + '%d %B %Y at %H:%M hrs)') + '\n')
+
+	########################################################################
+
+	# Loop over all objects in the bucket that contain the word 'TestSample_0' in their key name
+
+	for i in range(total_files):
+		obj = objects[i]
+
+		if ('TestSample_0' in obj.key):
+			try:
+				print(str(obj.key))
+				# Delete the object
+				obj.delete()
+			except:
+				# If an error occurs, raise an exception
+				raise Exception('Something went wrong')
+
+#######################################################################################

@@ -1,7 +1,5 @@
 .DS_Store
 PASSWORDS.py
-.ipynb_checkpoints/*
 *.csv
 *.txt
 *.json
-S3_files.txt
