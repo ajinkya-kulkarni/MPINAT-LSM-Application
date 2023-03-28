@@ -50,10 +50,6 @@ from PASSWORDS import *
 
 ########################################################################################
 
-# Create a boto3 client for S3, import data from the PASSWORDS.py file
-
-s3 = boto3.client('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = AMAZON_S3_ACCESS_KEY, aws_secret_access_key = AMAZON_S3_SECRET_KEY)
-
 def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, FolderPathKey):
 
 	"""
@@ -68,6 +64,9 @@ def make_multipart_upload(tiff_file, bucket_name, amazon_bucket_target_name, Fol
 	Returns:
 		None
 	"""
+
+	# Create a boto3 client for S3
+	s3 = boto3.client('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = AMAZON_S3_ACCESS_KEY, aws_secret_access_key = AMAZON_S3_SECRET_KEY)
 
 	try:
 		# Create a multipart upload
