@@ -592,7 +592,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		with open(filename, 'w') as file:
 			# Write the first line with timestamp
-			timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs')
+			timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs UTC time')
 			file.write('Log generated on ' + timestamp + '\n')
 			file.write('\n')
 
