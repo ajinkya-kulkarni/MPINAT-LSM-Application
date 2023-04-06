@@ -50,6 +50,8 @@ from botocore.exceptions import ClientError
 from PASSWORDS import *
 from modules import *
 
+type_of_scan = 'LSM'
+
 #######################################################################
 
 SleepTime = 5
@@ -115,7 +117,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	access_key = AMAZON_S3_ACCESS_KEY
 	secret_key = AMAZON_S3_SECRET_KEY
 	bucket_name = AMAZON_S3_BUCKET
-	gwdg = boto3.resource('s3', endpoint_url = AMAZON_S3_ENDPOINT_URL, aws_access_key_id = access_key, aws_secret_access_key = secret_key)
 
 	###############################################################
 
@@ -558,10 +559,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 			amazon_bucket_target_name = 'LSM' + '/' + SampleKey + '/' + str(tiff_files[i])
 
-			# amazon_bucket_target_name = 'PCT' + '/' + SampleKey + '/' + str(tiff_files[i])
-
-			# amazon_bucket_target_name = 'TWOPM' + '/' + SampleKey + '/' + str(tiff_files[i])
-
 			try:
 
 				make_multipart_upload(tiff_files[i], bucket_name, amazon_bucket_target_name, FolderPathKey)
@@ -576,19 +573,36 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		#######################################################
 
-		Uploaded_files_to_S3 = [file.key for file in gwdg.Bucket(bucket_name).objects.filter(Prefix = SampleKey)]
+		s3 = boto3.resource('s3',endpoint_url=AMAZON_S3_ENDPOINT_URL, aws_access_key_id=AMAZON_S3_ACCESS_KEY, aws_secret_access_key=AMAZON_S3_SECRET_KEY)
 
-		file_name = 'Uploaded_files_to_S3.txt'
-		file_path = os.path.join(os.getcwd(), file_name)
-		if os.path.exists(file_path):
-			os.remove(file_path)
+		# Create a Bucket object representing the specified Amazon S3 bucket
+		bucket = s3.Bucket(AMAZON_S3_BUCKET)
 
-		timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs')
+		prefix = type_of_scan + '/' + SampleKey
+		# Get list of objects in the PCT directory
+		objects = list(bucket.objects.filter(Prefix=prefix))
 
-		with open('Uploaded_files_to_S3.txt', 'w') as f:
-			f.write(f"Created on {timestamp}\n")
-			f.write("\n")
-			f.writelines([file + '\n' for file in Uploaded_files_to_S3])
+		# Get total number of files in the bucket
+		total_files = len(objects)
+
+		filename = 'Uploaded_files_to_S3.txt'
+
+		if os.path.exists(filename):
+			os.remove(filename)
+
+		with open(filename, 'w') as file:
+			# Write the first line with timestamp
+			timestamp = datetime.now().strftime('%d %B %Y at %H:%M hrs')
+			file.write('Log generated on ' + timestamp + '\n')
+			file.write('\n')
+
+			# Loop over each object in the bucket and write its name and upload date to the text file
+			for i in range(total_files):
+
+				obj = objects[i]
+
+				# Write object name and upload date to text file
+				file.write(obj.key + ' ' + obj.last_modified.strftime('(Created on : ' + '%d %B %Y at %H:%M hrs)') + '\n')
 
 		#######################################################
 
