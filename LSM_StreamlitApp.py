@@ -602,7 +602,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 				obj = objects[i]
 
 				# Write object name and upload date to text file
-				file.write(obj.key + ' ' + obj.last_modified.strftime('(Created on : ' + '%d %B %Y at %H:%M hrs)') + '\n')
+				file.write(obj.key + ' ' + obj.last_modified.strftime('(Created on : ' + '%d %B %Y at %H:%M hrs UTC time)') + '\n')
 
 		#######################################################
 
