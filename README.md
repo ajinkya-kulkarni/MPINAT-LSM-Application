@@ -2,7 +2,7 @@
 
 # LSM Scan Uploader
 
-This is a repository for accessing the source codes for the datalake and Linkahead interfaces used in the ABA project at the Max Planck Institute for Multidisciplinary Sciences, Göttingen. This is a Python script that can be used to upload LSM scan images and metadata to an Amazon S3 bucket and a CaosDB server, respectively. It is designed to work with light sheet microscopy files.
+This is a repository for accessing the source codes for the interface used in the ABA project at the Max Planck Institute for Multidisciplinary Sciences, Göttingen. This is a Python script that can be used to upload LSM scan images and metadata to an Amazon S3 bucket and a CaosDB server, respectively. It is designed to work with light sheet microscopy files, two photon images and CT scans.
 
 ## Prerequisites
 
