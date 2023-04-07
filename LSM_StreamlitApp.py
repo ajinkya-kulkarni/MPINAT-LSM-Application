@@ -557,7 +557,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		for i in range(len(tiff_files)):
 
-			amazon_bucket_target_name = 'LSM' + '/' + SampleKey + '/' + str(tiff_files[i])
+			amazon_bucket_target_name = type_of_scan + '/' + SampleKey + '/' + str(tiff_files[i])
 
 			try:
 
