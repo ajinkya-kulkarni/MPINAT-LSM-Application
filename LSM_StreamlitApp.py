@@ -557,7 +557,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 		for i in range(len(tiff_files)):
 
-			amazon_bucket_target_name = type_of_scan + '/' + SampleKey + '/' + str(tiff_files[i])
+			# amazon_bucket_target_name = type_of_scan + '/' + SampleKey + '/' + str(tiff_files[i])
+
+			amazon_bucket_target_name = SampleKey + '/' + type_of_scan + '/' + str(tiff_files[i])
 
 			try:
 
@@ -578,7 +580,9 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 		# Create a Bucket object representing the specified Amazon S3 bucket
 		bucket = s3.Bucket(AMAZON_S3_BUCKET)
 
-		prefix = type_of_scan + '/' + SampleKey
+		# prefix = type_of_scan + '/' + SampleKey
+		prefix = SampleKey + '/' + type_of_scan
+
 		# Get list of objects in the PCT directory
 		objects = list(bucket.objects.filter(Prefix=prefix))
 
