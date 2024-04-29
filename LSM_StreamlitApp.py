@@ -113,6 +113,7 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 	###############################################################
 
 	st.error('Unsuccessful connection with the Linkahead DB. Contact the admin(s) for help.', icon = None)
+	st.stop()
 
 	###############################################################
 
