@@ -173,9 +173,7 @@ print()
 
 base_url = "https://raw.githubusercontent.com/ajinkya-kulkarni/MPINAT-LSM-Application/main/"
 
-# file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
-
-file_names = ["LSM_StreamlitApp.py"]
+file_names = ["LSM_StreamlitApp.py", "modules.py", "requirements.txt"]
 
 for file_name in file_names:
 
