@@ -112,11 +112,6 @@ with st.form(key = 'LSM_SCAN_FORM_KEY', clear_on_submit = True):
 
 	###############################################################
 
-	st.error('Unsuccessful connection with the Linkahead DB. Contact the admin(s) for help.', icon = None)
-	st.stop()
-
-	###############################################################
-
 	# Information regarding the Amazon S3 bucket
 
 	access_key = AMAZON_S3_ACCESS_KEY
